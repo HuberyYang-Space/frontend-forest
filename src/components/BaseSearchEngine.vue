@@ -4,54 +4,67 @@ import { ArrowLeftBold, ArrowRightBold, Search } from '@element-plus/icons-vue'
 // 搜索框
 const showModal = ref(false)
 const isOpen = ref(false)
+const isTourOpen = ref(false)
+const input = ref(null)
+const tourEl = ref(null)
 const curIndex = ref(0)
 const keyWord = ref('')
 const searchMainLeft = ref(-453)
-const searchImgList = [
+const searchItemList = [
   {
     name: '百度',
     alt: 'baidu',
     src: 'https://infinity-permanent.infinitynewtab.com/infinity/search-add/baidu.png?imageMogr2/thumbnail/240x/format/webp/blur/1x0/quality/100|imageslim',
+    url: 'http://www.baidu.com/baidu?word=',
   },
   {
     name: '谷歌',
     alt: 'google',
     src: 'https://infinity-permanent.infinitynewtab.com/infinity/search-add/google.png?imageMogr2/thumbnail/240x/format/webp/blur/1x0/quality/100|imageslim',
+    url: 'https://www.google.com/search?q=',
   },
   {
     name: '必应',
     alt: 'bing',
     src: 'https://infinity-permanent.infinitynewtab.com/infinity/search-add/bing_new.png?imageMogr2/thumbnail/240x/format/webp/blur/1x0/quality/100|imageslim',
-  },
-  {
-    name: '雅虎',
-    alt: 'yahoo',
-    src: 'https://infinity-permanent.infinitynewtab.com/infinity/search-add/yahoo.png?imageMogr2/thumbnail/240x/format/webp/blur/1x0/quality/100|imageslim',
+    url: 'https://cn.bing.com/search?q=',
   },
 ]
 
 let timer: NodeJS.Timeout | null
+let timer2: NodeJS.Timeout | null
 const startSwitch = ref(false)
+
+function onKeyDown(e: KeyboardEvent) {
+  if ((e.key === 'Escape' && isOpen.value) || (e.key === 'Enter' && !isOpen.value)) {
+    e.preventDefault()
+    handleSearchMainOpen()
+  }
+
+  if (e.key === 'Tab' && isOpen.value) {
+    e.preventDefault()
+    if (curIndex.value === 2)
+      curIndex.value = 0
+    else
+      curIndex.value += 1
+  }
+}
+watch(isOpen, (val) => {
+  if (val) {
+    (input.value as any).focus()
+  }
+})
 
 onMounted(() => {
   // 监听按钮事件
-  window.addEventListener('keydown', (e) => {
-    if ((e.key === 'Escape' && isOpen.value) || (e.key === 'Enter' && !isOpen.value)) {
-      e.preventDefault()
-      handleSearchMainOpen()
-    }
-
-    if (e.key === 'Tab' && isOpen.value) {
-      e.preventDefault()
-      if (curIndex.value === 3)
-        curIndex.value = 0
-      else
-        curIndex.value += 1
-    }
-  })
-
+  window.addEventListener('keydown', e => onKeyDown(e))
   timer = setInterval(() => {
     startSwitch.value = !startSwitch.value
+  }, 2000)
+
+  timer2 = setTimeout(() => {
+    isTourOpen.value = true
+    clearTimeout(timer2 as NodeJS.Timeout)
   }, 2000)
 
   const searchEl = document.querySelector('.el-input-group__prepend') as HTMLElement
@@ -59,13 +72,8 @@ onMounted(() => {
 })
 
 function handlerSearch() {
-  const searchUrlList = [
-    `http://www.baidu.com/baidu?word=${keyWord.value}`,
-    `https://www.google.com/search?q=${keyWord.value}`,
-    `https://cn.bing.com/search?q=${keyWord.value}`,
-    `https://sg.search.yahoo.com/search?p=${keyWord.value}`,
-  ]
-  window.open(searchUrlList[curIndex.value], '_blank')
+  const url = searchItemList[curIndex.value].url + keyWord.value
+  window.open(url, '_blank')
   keyWord.value = ''
 }
 
@@ -84,17 +92,37 @@ const switchIcon = computed(() => startSwitch.value ? Search : ArrowRightBold)
 </script>
 
 <template>
-  <!-- 搜索框 -->
-  <div class="search_main wobble-ver-left" :style="{ left: `${searchMainLeft}px` }">
+  <div class="search_main" :style="{ left: `${searchMainLeft}px` }">
+    <el-tour v-model="isTourOpen">
+      <el-tour-step
+        :target="(tourEl as any).$el"
+        title="搜索框"
+        description=""
+      >
+        <div>
+          点击 <el-tag type="primary">
+            Enter
+          </el-tag> 打开搜索框；点击 <el-tag type="primary">
+            Tab
+          </el-tag> 切换搜索引擎；点击 <el-tag type="primary">
+            Esc
+          </el-tag> 收起搜索框
+        </div>
+      </el-tour-step>
+      <template #indicators>
+        <span />
+      </template>
+    </el-tour>
+
     <el-form @submit="handlerSearch">
-      <el-input v-model.trim="keyWord" placeholder="输入并搜索" type="text" name="word" autofocus>
+      <ElInput ref="input" v-model.trim="keyWord" placeholder="输入并搜索" type="text" name="word">
         <template #prepend>
           <div class="search_icon">
             <img
               draggable="false"
               class="search-icon-img"
-              :src="searchImgList[curIndex].src"
-              :alt="searchImgList[curIndex].alt"
+              :src="searchItemList[curIndex].src"
+              :alt="searchItemList[curIndex].alt"
             >
             <el-icon>
               <CaretBottom />
@@ -102,16 +130,16 @@ const switchIcon = computed(() => startSwitch.value ? Search : ArrowRightBold)
           </div>
         </template>
         <template #append>
-          <el-button :icon="isOpen ? ArrowLeftBold : switchIcon" @click="handleSearchMainOpen" />
+          <el-button ref="tourEl" :icon="isOpen ? ArrowLeftBold : switchIcon" @click="handleSearchMainOpen" />
         </template>
-      </el-input>
+      </ElInput>
     </el-form>
 
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showModal" class="modal-mask" @click="showModal = false">
           <div class="search_box">
-            <div v-for="({ name, src, alt }, idx) in searchImgList" :key="name" @click="handleModalClose(idx)">
+            <div v-for="({ name, src, alt }, idx) in searchItemList" :key="name" @click="handleModalClose(idx)">
               <img draggable="false" class="icon-img" :src :alt>
               <span>{{ name }}</span>
             </div>
@@ -155,6 +183,7 @@ $base-top: 70px;
     height: calc($search-height * 0.485);
     margin-right: calc($search-height * 0.1);
     object-fit: cover;
+    user-select: none;
   }
 
   .search_icon {
@@ -173,7 +202,7 @@ $base-top: 70px;
   // margin-top: 20px;
   display: flex;
   justify-content: flex-start;
-  width: calc(4 * $search-box-size);
+  width: calc(3 * $search-box-size);
 
   div:first-child {
     border-left: 1px solid rgb(243, 243, 243);
@@ -231,92 +260,5 @@ $base-top: 70px;
 .modal-leave-to .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
-}
-
-.wobble-ver-left {
-  -webkit-animation: 1s wobble-ver-left 1s 2 both;
-  animation: 1s wobble-ver-left 1s 2 both;
-}
-
-/* ----------------------------------------------
- * Generated by Animista on 2023-4-13 16:57:53
- * Licensed under FreeBSD License.
- * See http://animista.net/license for more info.
- * w: http://animista.net, t: @cssanimista
- * ---------------------------------------------- */
-
-/**
- * ----------------------------------------
- * animation wobble-ver-left
- * ----------------------------------------
- */
-@-webkit-keyframes wobble-ver-left {
-  0%,
-  100% {
-    -webkit-transform: translateY(0) rotate(0);
-    transform: translateY(0) rotate(0);
-    -webkit-transform-origin: 50% 50%;
-    transform-origin: 50% 50%;
-  }
-
-  15% {
-    -webkit-transform: translateY(-30px) rotate(-6deg);
-    transform: translateY(-30px) rotate(-6deg);
-  }
-
-  30% {
-    -webkit-transform: translateY(15px) rotate(6deg);
-    transform: translateY(15px) rotate(6deg);
-  }
-
-  45% {
-    -webkit-transform: translateY(-15px) rotate(-3.6deg);
-    transform: translateY(-15px) rotate(-3.6deg);
-  }
-
-  60% {
-    -webkit-transform: translateY(9px) rotate(2.4deg);
-    transform: translateY(9px) rotate(2.4deg);
-  }
-
-  75% {
-    -webkit-transform: translateY(-6px) rotate(-1.2deg);
-    transform: translateY(-6px) rotate(-1.2deg);
-  }
-}
-
-@keyframes wobble-ver-left {
-  0%,
-  100% {
-    -webkit-transform: translateY(0) rotate(0);
-    transform: translateY(0) rotate(0);
-    -webkit-transform-origin: 50% 50%;
-    transform-origin: 50% 50%;
-  }
-
-  15% {
-    -webkit-transform: translateY(-30px) rotate(-6deg);
-    transform: translateY(-30px) rotate(-6deg);
-  }
-
-  30% {
-    -webkit-transform: translateY(15px) rotate(6deg);
-    transform: translateY(15px) rotate(6deg);
-  }
-
-  45% {
-    -webkit-transform: translateY(-15px) rotate(-3.6deg);
-    transform: translateY(-15px) rotate(-3.6deg);
-  }
-
-  60% {
-    -webkit-transform: translateY(9px) rotate(2.4deg);
-    transform: translateY(9px) rotate(2.4deg);
-  }
-
-  75% {
-    -webkit-transform: translateY(-6px) rotate(-1.2deg);
-    transform: translateY(-6px) rotate(-1.2deg);
-  }
 }
 </style>
