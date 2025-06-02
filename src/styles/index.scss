@@ -33,31 +33,3 @@ body {
     // -webkit-border-radius:3px
   }
 }
-
-// 看板娘样式
-#waifu {
-  z-index: 14 !important;
-
-  #waifu-tips {
-    width: 200px;
-    min-height: 50px;
-  }
-
-  #live2d {
-    height: 250px;
-    width: 250px;
-  }
-
-  #waifu-tool {
-    top: 50px;
-    right: 20px;
-
-    #waifu-tool-asteroids {
-      display: none;
-    }
-
-    svg {
-      height: 20px;
-    }
-  }
-}

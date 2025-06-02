@@ -37,17 +37,17 @@ function handleRedirect(url: string) {
 }
 
 // 图片加载失败的默认行为
-// function imgerror(event: anyKey) {
-//   const img = event.srcElement
-//   img.src = new URL('../../error.gif', import.meta.url).href
-//   img.onerror = null
-//   img.classList.add('err')
-// }
+function imgerror(event: AnyKey) {
+  const img = event.srcElement
+  img.src = new URL('/error.gif', import.meta.url).href
+  img.onerror = null
+  img.classList.add('err')
+}
 
-function onCardMouseFocus(item: anyKey) {
+function onCardMouseFocus(item: AnyKey) {
   item.showConfig = true
 }
-function onCardMouseLeave(item: anyKey) {
+function onCardMouseLeave(item: AnyKey) {
   item.showConfig = false
 }
 </script>
@@ -60,15 +60,11 @@ function onCardMouseLeave(item: anyKey) {
     </div>
     <el-row :gutter="15">
       <el-col v-for="tab in data" :key="tab.id" :span="6">
-        <el-card shadow="hover" :body-style="{ padding: 0 }" @mouseenter="onCardMouseFocus(tab)" @mouseleave="onCardMouseLeave(tab)">
+        <el-card shadow="hover" :body-style="{ padding: 0 }" @mouseleave="onCardMouseLeave(tab)">
           <div class="card_main">
             <div class="card_l">
-              <div v-if="tab.iconUrl" class="logo">
-                <!-- <img :src="tab.iconUrl" :onerror="(e:anyKey) => imgerror(e)"> -->
-                <img :src="tab.iconUrl">
-              </div>
-              <div v-else class="logo err">
-                <img src="/error.gif">
+              <div class="logo">
+                <img :src="tab.iconUrl" :onerror="(e:AnyKey) => imgerror(e)">
               </div>
             </div>
             <div class="card_m">
@@ -93,7 +89,7 @@ function onCardMouseLeave(item: anyKey) {
                 </p>
               </el-tooltip>
             </div>
-            <div class="card_r">
+            <div class="card_r" @mouseenter="onCardMouseFocus(tab)">
               <el-icon :size="15">
                 <DArrowRight />
               </el-icon>

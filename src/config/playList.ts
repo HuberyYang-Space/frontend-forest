@@ -13,7 +13,7 @@ async function getPlayList(id: string) {
   return axios.get(`https://huberyyang.site:83/api/getFileList?prefix=${id}`)
 }
 
-function initListItem(curList: anyKey[], album: string): AudioItem[] {
+function initListItem(curList: AnyKey[], album: string): AudioItem[] {
   const temp: AudioItem[] = []
   curList.forEach((item) => {
     const Key = item.key

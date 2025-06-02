@@ -23,6 +23,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTour: typeof import('element-plus/es')['ElTour']
     ElTourStep: typeof import('element-plus/es')['ElTourStep']
+    Nav: typeof import('./src/components/Nav.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid'
+import axios from 'axios'
 
 interface MenuItem {
   id: string
@@ -7,27 +7,17 @@ interface MenuItem {
   tags: string[]
   content?: string
   showConfig: boolean
+  iconUrl?: string
 }
 
 export interface MenuList { [key: string]: { title: string, data: MenuItem[] } }
 
-interface NavItem {
-  id: string
-  navName: string
-  active: boolean
-  href: string
+async function getItemIcon(id: string, query: string) {
+  const res = await axios.get(`https://huberyyang.site:84/api/getWebIcons?id=${id}&url=${query}`)
+  return res?.data?.data || ''
 }
 
-export default () => {
-  const navList: NavItem[] = [
-    // { id: nanoid(), navName: '首页', active: true },
-    { id: nanoid(), navName: '博客', active: false, href: 'https://huberyyang.site:82/' },
-    // { id: nanoid(), navName: '个人健身管理系统', active: false, href: '' },
-    // { id: nanoid(), navName: '个人摄影作品集', active: false, href: '' },
-    { id: nanoid(), navName: 'GitHub', active: false, href: 'https://github.com/Hub-yang' },
-    { id: nanoid(), navName: '主页', active: false, href: 'https://huberyyang.site/' },
-    { id: nanoid(), navName: '音乐', active: false, href: 'https://huberyyang.site:83/' },
-  ]
+export async function getNavList() {
   const menuList: MenuList = {
     // 框架与生态
     list1: {
@@ -486,8 +476,14 @@ export default () => {
     // },
   }
 
-  return {
-    navList,
-    menuList,
+  for (const key in menuList) {
+    const listData = menuList[key]
+    for await (const item of listData.data) {
+      const url = item.url.en || item.url.zh || ''
+      const res = await getItemIcon(item.id, url)
+      item.iconUrl = res
+    }
   }
+
+  return menuList
 }

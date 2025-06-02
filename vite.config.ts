@@ -1,9 +1,7 @@
 import path from 'node:path'
 import process from 'node:process'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
-import ElementPlus from 'unplugin-element-plus/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -12,7 +10,6 @@ import { VueRouterAutoImports } from 'unplugin-vue-router'
 import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig, loadEnv } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import svgLoader from 'vite-svg-loader'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -21,22 +18,15 @@ export default defineConfig(({ mode }) => {
   return defineConfig({
     plugins: [
       vue(),
-      vueJsx(),
-      svgLoader(),
       vueDevTools(),
       VueRouter({}),
-      ElementPlus({
-        // useSource: true
-      }),
       AutoImport({
-        imports: ['vue', 'pinia', 'vue-i18n', VueRouterAutoImports],
+        imports: ['vue', VueRouterAutoImports],
         dirs: ['./src/utils/**'],
         resolvers: [ElementPlusResolver()],
       }),
       Components({
-        dirs: ['src/components'],
-        extensions: ['vue', 'md'],
-        include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
+        include: [/\.vue$/, /\.vue\?vue/],
         resolvers: [ElementPlusResolver(), IconsResolver()],
       }),
       Icons({

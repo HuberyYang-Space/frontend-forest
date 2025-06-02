@@ -30,63 +30,6 @@
     }
   }
 
-  // 导航部分
-  .nav {
-    position: fixed;
-    background-color: #222;
-    top: 0;
-    left: 0;
-    right: 0;
-    transition: all 0.3s ease-in-out;
-    z-index: 999;
-
-    &.active {
-      background-color: #fff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-
-      .container {
-        padding: 10px 0;
-
-        a {
-          color: #000;
-        }
-      }
-    }
-
-    .container {
-      max-width: 100vw;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-      transition: $com-transition;
-
-      h1 {
-        font-size: 20px;
-      }
-
-      a {
-        color: #fff;
-        text-decoration: none;
-        padding: 7px 15px;
-        transition: $com-transition;
-
-        &:hover,
-        &.current {
-          color: #c0392b;
-          font-weight: bold;
-        }
-      }
-
-      ul {
-        display: flex;
-        list-style-type: none;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-  }
-
   // 图片部分
   // .hero {
   //   background-image: url('https://images.pexels.com/photos/450035/pexels-photo-450035.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
@@ -139,7 +82,9 @@
 
     #btn {
       text-decoration: none;
-      display: inline-block;
+      display: flex;
+      align-items: center;
+      gap: 4px;
       padding: 8px 40px;
       background-color: #fff;
       font-size: 1.2em;
@@ -149,6 +94,10 @@
       transform: translateY(100px);
       font-family: 'ZCOOL XiaoWei', sans-serif;
       cursor: pointer;
+
+      .rotate {
+        animation: rotate 1s linear infinite;
+      }
     }
 
     #text {
@@ -350,5 +299,15 @@
     text-align: right;
     color: #de4f51;
     user-select: none;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
