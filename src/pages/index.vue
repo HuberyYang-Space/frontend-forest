@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import axios from 'axios'
-import config from '~/config'
-import useNavFixed from '../hooks/useNavFixed'
-import useParallaxRolling from '../hooks/useParallaxRolling'
+import config from '~/config/nav'
+import { fetchPlayList } from '~/config/playList'
+import useNavFixed from '~/hooks/useNavFixed'
+import useParallaxRolling from '~/hooks/useParallaxRolling'
 
-// 播放器
 const CardList = defineAsyncComponent(() => import('~/components/CardList.vue'))
 const BaseSearchEngine = defineAsyncComponent(() => import('~/components/BaseSearchEngine.vue'))
 const { nav: navEl, navActive, navList, handleClickNav } = useNavFixed() as anyKey
 const { onMounted } = useParallaxRolling()
 
 const baseURL = import.meta.env.DEV ? import.meta.env.VITE_APP_BASE_API : import.meta.env.VITE_APP_REQUEST_API + import.meta.env.VITE_APP_TRUE_API
-
 const list = config().menuList
-
 onMounted(async () => updateItemIcon())
 
 async function getItemIcon(id: string, query: string) {
@@ -42,14 +40,14 @@ function handlerScroll() {
 }
 
 // 播放器
-onMounted(() => {
+onMounted(async () => {
   const instance = getCurrentInstance() as any
   const APlayer = instance.appContext.config.globalProperties.$aplayer
   ;(window as any).ap = new APlayer({
     container: document.getElementById('player'),
     fixed: true,
     lrcType: 3,
-    audio: config().audioList,
+    audio: await fetchPlayList(),
   })
 })
 

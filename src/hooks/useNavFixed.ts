@@ -1,4 +1,4 @@
-import config from '~/config'
+import config from '~/config/nav'
 
 export default function () {
   const nav = ref()
@@ -6,7 +6,7 @@ export default function () {
   const navList = ref(config().navList)
 
   const fixNav = () => {
-    if (window.scrollY > nav.value.offsetHeight)
+    if (window.scrollY > nav.value?.offsetHeight)
       navActive.value = true
     else
       navActive.value = false

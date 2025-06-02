@@ -6,7 +6,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import ElementPlus from 'unplugin-element-plus/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
-import { ElementPlusResolver, VueUseComponentsResolver } from 'unplugin-vue-components/resolvers'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { VueRouterAutoImports } from 'unplugin-vue-router'
 import VueRouter from 'unplugin-vue-router/vite'
@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
         // useSource: true
       }),
       AutoImport({
-        imports: ['vue', 'pinia', 'vue-i18n', '@vueuse/core', VueRouterAutoImports],
+        imports: ['vue', 'pinia', 'vue-i18n', VueRouterAutoImports],
         dirs: ['./src/utils/**'],
         resolvers: [ElementPlusResolver()],
       }),
@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
         dirs: ['src/components'],
         extensions: ['vue', 'md'],
         include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
-        resolvers: [ElementPlusResolver(), IconsResolver(), VueUseComponentsResolver()],
+        resolvers: [ElementPlusResolver(), IconsResolver()],
       }),
       Icons({
         compiler: 'vue3',

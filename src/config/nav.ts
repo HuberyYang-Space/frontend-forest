@@ -1,13 +1,5 @@
 import { nanoid } from 'nanoid'
 
-interface AudioItem {
-  name?: string
-  artist?: string
-  url?: string
-  cover?: string
-  lrc?: string
-}
-
 interface MenuItem {
   id: string
   url: { en?: string, zh?: string }
@@ -35,30 +27,6 @@ export default () => {
     { id: nanoid(), navName: 'GitHub', active: false, href: 'https://github.com/Hub-yang' },
     { id: nanoid(), navName: '主页', active: false, href: 'https://huberyyang.site/' },
     { id: nanoid(), navName: '音乐', active: false, href: 'https://huberyyang.site:83/' },
-  ]
-  const audioList: AudioItem[] = [
-    {
-      name: '黑色泡沫',
-      artist: '林俊杰',
-      url: 'https://www.huberyyang.site/audios/%E6%9E%97%E4%BF%8A%E6%9D%B0/%E6%9E%97%E4%BF%8A%E6%9D%B0-%E9%BB%91%E8%89%B2%E6%B3%A1%E6%B2%AB.flac',
-      cover: 'https://www.huberyyang.site/covers/%E6%9E%97%E4%BF%8A%E6%9D%B0/%E9%87%8D%E6%8B%BE_%E5%BF%AB%E4%B9%90.jpg',
-      lrc: 'https://www.huberyyang.site/lrcs/%E6%9E%97%E4%BF%8A%E6%9D%B0-%E9%BB%91%E8%89%B2%E6%B3%A1%E6%B2%AB.lrc',
-    },
-    {
-      name: 'FIND YOU',
-      artist: '邓紫棋',
-      url: 'https://www.huberyyang.site/audios/%E9%82%93%E7%B4%AB%E6%A3%8B/G.E.M.%E9%82%93%E7%B4%AB%E6%A3%8B-FIND%20YOU.flac',
-      cover: 'https://www.huberyyang.site/covers/%E9%82%93%E7%B4%AB%E6%A3%8B/%E5%90%AF%E7%A4%BA%E5%BD%95.jpg',
-      lrc: 'https://www.huberyyang.site/lrcs/G.E.M.%E9%82%93%E7%B4%AB%E6%A3%8B-FIND%20YOU.lrc',
-    },
-    {
-      name: '粉色海洋',
-      artist: '周杰伦',
-      url: 'https://www.huberyyang.site/audios/%E5%91%A8%E6%9D%B0%E4%BC%A6/%E5%91%A8%E6%9D%B0%E4%BC%A6-%E7%B2%89%E8%89%B2%E6%B5%B7%E6%B4%8B.flac',
-      cover:
-        'https://www.huberyyang.site/covers/%E5%91%A8%E6%9D%B0%E4%BC%A6/%E6%9C%80%E4%BC%9F%E5%A4%A7%E7%9A%84%E4%BD%9C%E5%93%81.jpg',
-      lrc: 'https://www.huberyyang.site/lrcs/%E5%91%A8%E6%9D%B0%E4%BC%A6-%E7%B2%89%E8%89%B2%E6%B5%B7%E6%B4%8B.lrc',
-    },
   ]
   const menuList: MenuList = {
     // 框架与生态
@@ -520,7 +488,6 @@ export default () => {
 
   return {
     navList,
-    audioList,
     menuList,
   }
 }
