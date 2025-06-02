@@ -6,5 +6,8 @@ export default antfu(
     rules: {
       'no-console': 'off',
     },
+    globals: {
+      definePage: 'readonly',
+    },
   },
 )

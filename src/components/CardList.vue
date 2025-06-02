@@ -39,7 +39,7 @@ function handleRedirect(url: string) {
 // 图片加载失败的默认行为
 // function imgerror(event: anyKey) {
 //   const img = event.srcElement
-//   img.src = new URL('../../public/error.gif', import.meta.url).href
+//   img.src = new URL('../../error.gif', import.meta.url).href
 //   img.onerror = null
 //   img.classList.add('err')
 // }
@@ -68,7 +68,7 @@ function onCardMouseLeave(item: anyKey) {
                 <img :src="tab.iconUrl">
               </div>
               <div v-else class="logo err">
-                <img src="../../public/error.gif">
+                <img src="../../error.gif">
               </div>
             </div>
             <div class="card_m">

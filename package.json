@@ -14,7 +14,6 @@
   "bugs": {
     "url": "https://github.com/Hub-yang/frontend-forest.git/issues"
   },
-
   "scripts": {
     "dev": "vite --open",
     "build": "vue-tsc && vite build",
@@ -56,6 +55,7 @@
     "unplugin-element-plus": "^0.10.0",
     "unplugin-icons": "^22.1.0",
     "unplugin-vue-components": "^28.7.0",
+    "unplugin-vue-router": "^0.12.0",
     "vite": "^6.0.5",
     "vite-plugin-vue-devtools": "^7.6.8",
     "vite-svg-loader": "^5.1.0",

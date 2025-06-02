@@ -1,7 +1,10 @@
+/* eslint-disable import/no-duplicates */
 import * as ELIcon from '@element-plus/icons-vue'
 import APlayer from 'aplayer/dist/APlayer.min.js'
+import NProgress from 'nprogress'
 import { createApp } from 'vue'
-import router from '~/router'
+import { createRouter, createWebHistory } from 'vue-router'
+import { handleHotUpdate, routes } from 'vue-router/auto-routes'
 import App from './App.vue'
 import '~/styles/index.scss'
 import 'aplayer/dist/APlayer.min.css'
@@ -18,5 +21,23 @@ for (const iconName in ELIcon) {
     app.component(iconName, ELIcon[iconName])
   }
 }
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+if (import.meta.hot) {
+  handleHotUpdate(router)
+}
+
+router.beforeEach((_to, _from, next) => {
+  NProgress.start()
+  next()
+})
+
+router.afterEach((_to, _from) => {
+  NProgress.done()
+})
 
 app.use(router).mount('#app')

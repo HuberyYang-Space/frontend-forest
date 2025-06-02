@@ -8,6 +8,8 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import { ElementPlusResolver, VueUseComponentsResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
+import { VueRouterAutoImports } from 'unplugin-vue-router'
+import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig, loadEnv } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import svgLoader from 'vite-svg-loader'
@@ -22,11 +24,12 @@ export default defineConfig(({ mode }) => {
       vueJsx(),
       svgLoader(),
       vueDevTools(),
+      VueRouter({}),
       ElementPlus({
         // useSource: true
       }),
       AutoImport({
-        imports: ['vue', 'pinia', 'vue-router', 'vue-i18n', '@vueuse/core'],
+        imports: ['vue', 'pinia', 'vue-i18n', '@vueuse/core', VueRouterAutoImports],
         dirs: ['./src/utils/**'],
         resolvers: [ElementPlusResolver()],
       }),
