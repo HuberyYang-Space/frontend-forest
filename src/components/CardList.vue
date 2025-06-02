@@ -68,7 +68,7 @@ function onCardMouseLeave(item: anyKey) {
                 <img :src="tab.iconUrl">
               </div>
               <div v-else class="logo err">
-                <img src="../../error.gif">
+                <img src="/error.gif">
               </div>
             </div>
             <div class="card_m">
