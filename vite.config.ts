@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
     // 服务设置
     server: {
       host: '0.0.0.0',
-      port: 3334,
+      port: 5173,
       open: false,
       proxy: {
         [env.VITE_APP_BASE_API]: {

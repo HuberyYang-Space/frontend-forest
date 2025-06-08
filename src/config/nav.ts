@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 interface MenuItem {
   id: string
   url: { en?: string, zh?: string }
@@ -7,15 +5,17 @@ interface MenuItem {
   tags: string[]
   content?: string
   showConfig: boolean
-  iconUrl?: string
+  iconUrl: string
 }
 
 export interface MenuList { [key: string]: { title: string, data: MenuItem[] } }
 
-async function getItemIcon(id: string, query: string) {
-  const res = await axios.get(`https://huberyyang.site:84/api/getWebIcons?id=${id}&url=${query}`)
-  return res?.data?.data || ''
-}
+// async function getItemIcon(id: string, query: string) {
+//   const { VITE_APP_REQUEST_API, VITE_APP_TRUE_API } = import.meta.env
+//   const baseURL = VITE_APP_REQUEST_API + VITE_APP_TRUE_API
+//   const res = await axios.get(`${baseURL}/getWebIcons?id=${id}&url=${query}`)
+//   return res?.data?.data || ''
+// }
 
 export async function getNavList() {
   const menuList: MenuList = {
@@ -33,6 +33,7 @@ export async function getNavList() {
           tags: ['vue', 'js', '框架'],
           content: '渐进式 JavaScript 框架,易学易用，性能出色，适用场景丰富的 Web 前端框架',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/001',
         },
         {
           id: '002',
@@ -44,6 +45,7 @@ export async function getNavList() {
           tags: ['vue', '库'],
           content: 'Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式 + 库',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/002',
         },
         {
           id: '003',
@@ -55,6 +57,7 @@ export async function getNavList() {
           tags: ['vue', '库'],
           content: 'Vue.js 的官方路由',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/003',
         },
         {
           id: '004',
@@ -66,6 +69,7 @@ export async function getNavList() {
           tags: ['vue', '库'],
           content: 'Pinia 是 Vue 的存储库，它允许您跨组件/页面共享状态',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/004',
         },
         {
           id: '005',
@@ -77,6 +81,7 @@ export async function getNavList() {
           tags: ['react', 'js', '框架'],
           content: '用于构建用户界面的 JavaScript 库',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/005',
         },
         {
           id: '006',
@@ -88,6 +93,7 @@ export async function getNavList() {
           tags: ['react', '库'],
           content: 'React.js的官方路由',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/006',
         },
         {
           id: '007',
@@ -99,6 +105,7 @@ export async function getNavList() {
           tags: ['redux', '库'],
           content: 'JS 应用的状态容器，提供可预测的状态管理',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/007',
         },
         {
           id: '008',
@@ -110,6 +117,7 @@ export async function getNavList() {
           tags: ['react native', 'js', '框架'],
           content: '一次学习，随处编写',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/005',
         },
         {
           id: '009',
@@ -121,6 +129,7 @@ export async function getNavList() {
           tags: ['nuxtjs', 'vue', '框架'],
           content: '使用简便的 Vue 框架',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/009',
         },
         {
           id: '010',
@@ -132,6 +141,7 @@ export async function getNavList() {
           tags: ['nextjs', 'react', '框架'],
           content: '这是一个用于 生产环境的 React 框架',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/010',
         },
         {
           id: '011',
@@ -143,6 +153,7 @@ export async function getNavList() {
           tags: ['solidjs', 'js', '框架'],
           content: '一个用于构建用户界面，简单高效、性能卓越的JavaScript库',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/011',
         },
         {
           id: '012',
@@ -154,6 +165,7 @@ export async function getNavList() {
           tags: ['sveltejs', 'js', '框架'],
           content: 'Svelte 是一种全新的构建用户界面的方法',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/012',
         },
         {
           id: '013',
@@ -165,6 +177,7 @@ export async function getNavList() {
           tags: ['flutter', '框架'],
           content: 'Flutter 是 Google 开源的应用开发框架，仅通过一套代码库，就能构建精美的、原生平台编译的多平台应用',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/013',
         },
         {
           id: '014',
@@ -176,6 +189,7 @@ export async function getNavList() {
           tags: ['amgular', 'js', '框架'],
           content: '现代 Web 开发平台',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/014',
         },
         {
           id: '015',
@@ -187,6 +201,7 @@ export async function getNavList() {
           tags: ['preact', 'js', '框架'],
           content: 'React 的轻量级替代方案，体积仅有 3kB，并且拥有与 React 相同的 API',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/015',
         },
         {
           id: '016',
@@ -199,6 +214,7 @@ export async function getNavList() {
           content:
         'uni-app 是一个使用 Vue.js 开发所有前端应用的框架，开发者编写一套代码，可发布到iOS、Android、Web（响应式）、以及各种小程序（微信/支付宝/百度/头条/飞书/QQ/快手/钉钉/淘宝）、快应用等多个平台',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/016',
         },
         {
           id: '017',
@@ -210,6 +226,7 @@ export async function getNavList() {
           tags: ['ionic', '框架'],
           content: 'Ionic 是目前最有潜力的一款 HTML5 手机应用开发框架',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/017',
         },
         {
           id: '018',
@@ -221,6 +238,7 @@ export async function getNavList() {
           tags: ['nodejs', 'js'],
           content: 'Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行时',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/018',
         },
         {
           id: '019',
@@ -232,6 +250,7 @@ export async function getNavList() {
           tags: ['quik', 'js'],
           content: '毫不费力地构建即时交互的网络应用程序',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/019',
         },
       ],
     },
@@ -249,6 +268,7 @@ export async function getNavList() {
           tags: ['Webpack', '打包工具'],
           content: '构建你的 assets',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/020',
         },
         {
           id: '021',
@@ -260,6 +280,7 @@ export async function getNavList() {
           tags: ['vite', '工具链'],
           content: '下一代的前端工具链，为开发提供极速响应',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/021',
         },
         {
           id: '022',
@@ -271,6 +292,7 @@ export async function getNavList() {
           tags: ['esbuild', '打包工具'],
           content: '速度极快的网络捆绑器',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/022',
         },
         {
           id: '023',
@@ -282,6 +304,7 @@ export async function getNavList() {
           tags: ['parceljs', '打包工具'],
           content: '极速零配置Web应用打包工具',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/023',
         },
         {
           id: '024',
@@ -293,6 +316,7 @@ export async function getNavList() {
           tags: ['rollupjs', '打包工具'],
           content: 'Rollup 是一个 JavaScript 模块打包工具，可以将多个小的代码片段编译为完整的库和应用',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/024',
         },
         {
           id: '025',
@@ -304,6 +328,7 @@ export async function getNavList() {
           tags: ['babeljs', '编译器'],
           content: 'Babel 是一个 JavaScript 编译器',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/025',
         },
         {
           id: '026',
@@ -315,6 +340,7 @@ export async function getNavList() {
           tags: ['gruntjs', '构建工具'],
           content: 'JavaScript 世界的构建工具',
           showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/026',
         },
         {
           id: '027',
@@ -326,17 +352,7 @@ export async function getNavList() {
           tags: ['gulpjs', '构建工具'],
           content: '用自动化构建工具增强你的工作流程！',
           showConfig: false,
-        },
-        {
-          id: '029',
-          url: {
-            en: 'https://www.biomejs.cn/en/',
-            zh: 'https://www.biomejs.cn/',
-          },
-          title: 'Rome.js',
-          tags: ['romejs', '工具链'],
-          content: 'Rome 是一个完整的 JavaScript 工具链，集代码检测、打包、编译、测试等功能于一身',
-          showConfig: false,
+          iconUrl: 'https://www.huberyyang.site/asstes/frontend-forest/027',
         },
       ],
     },
@@ -476,14 +492,14 @@ export async function getNavList() {
     // },
   }
 
-  for (const key in menuList) {
-    const listData = menuList[key]
-    for await (const item of listData.data) {
-      const url = item.url.en || item.url.zh || ''
-      const res = await getItemIcon(item.id, url)
-      item.iconUrl = res
-    }
-  }
+  // for (const key in menuList) {
+  //   const listData = menuList[key]
+  //   for await (const item of listData.data) {
+  //     const url = item.url.en || item.url.zh || ''
+  //     const res = await getItemIcon(item.id, url)
+  //     item.iconUrl = res
+  //   }
+  // }
 
   return menuList
 }
