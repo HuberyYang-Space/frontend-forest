@@ -2,7 +2,7 @@
   "name": "frontend-forest",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@11.22.0",
   "description": "",
   "author": "Hubery Yang",
   "license": "MIT",
