@@ -1,4 +1,3 @@
-/* eslint-disable import/no-duplicates */
 import * as ELIcon from '@element-plus/icons-vue'
 import APlayer from 'aplayer/dist/APlayer.min.js'
 import NProgress from 'nprogress'

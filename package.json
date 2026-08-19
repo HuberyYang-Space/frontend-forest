@@ -19,7 +19,7 @@
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint:fix": "eslint --fix",
     "taze": "npx taze major -r",
     "prepare": "husky",
     "commitlint": "commitlint --edit"
@@ -58,6 +58,6 @@
     "vue-tsc": "^2.1.10"
   },
   "lint-staged": {
-    "*": "eslint . --fix"
+    "*": "eslint --fix"
   }
 }
