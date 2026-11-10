@@ -87,24 +87,18 @@
 }
 
 .card_r {
+  display: grid;
   flex: 0 0 max(44px, 10%);
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #606266;
+  cursor: pointer;
 
-  summary {
-    display: grid;
-    height: 100%;
-    place-items: center;
-    color: #606266;
-    cursor: pointer;
-    list-style: none;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--el-color-primary, #409eff);
-      outline-offset: -2px;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--el-color-primary, #409eff);
+    outline-offset: -2px;
   }
 }
 
@@ -121,6 +115,19 @@
   gap: 12px;
   background: rgb(0 0 0 / 10%);
   backdrop-filter: blur(8px);
+  visibility: hidden;
+  transform: translateY(100%);
+  transition:
+    transform 0.2s ease,
+    visibility 0s 0.2s;
+  pointer-events: none;
+
+  &.is-open {
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+    pointer-events: auto;
+  }
 
   a {
     display: grid;
@@ -139,14 +146,8 @@
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .card_r[open] .switch_box {
-    animation: reveal-links 0.2s ease-out;
-  }
-}
-
-@keyframes reveal-links {
-  from {
-    transform: translateY(100%);
+@media (prefers-reduced-motion: reduce) {
+  .switch_box {
+    transition: none;
   }
 }

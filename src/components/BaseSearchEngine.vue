@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { ArrowLeftBold, CaretBottom, Search } from '@element-plus/icons-vue'
+import type { ButtonInstance, InputInstance } from 'element-plus'
+import { ArrowLeftBold, ArrowRightBold, CaretBottom, Search } from '@element-plus/icons-vue'
+
+const iconOptions = '?imageMogr2/thumbnail/240x/format/webp/blur/1x0/quality/100|imageslim'
 
 const searchProviders = [
   {
     label: '百度',
-    icon: 'https://infinity-permanent.infinitynewtab.com/infinity/search-add/baidu.png',
+    icon: `https://infinity-permanent.infinitynewtab.com/infinity/search-add/baidu.png${iconOptions}`,
     url: 'http://www.baidu.com/baidu',
     queryParam: 'word',
   },
   {
     label: '谷歌',
-    icon: 'https://infinity-permanent.infinitynewtab.com/infinity/search-add/google.png',
+    icon: `https://infinity-permanent.infinitynewtab.com/infinity/search-add/google.png${iconOptions}`,
     url: 'https://www.google.com/search',
     queryParam: 'q',
   },
   {
     label: '必应',
-    icon: 'https://infinity-permanent.infinitynewtab.com/infinity/search-add/bing_new.png',
+    icon: `https://infinity-permanent.infinitynewtab.com/infinity/search-add/bing_new.png${iconOptions}`,
     url: 'https://cn.bing.com/search',
     queryParam: 'q',
   },
@@ -29,9 +32,14 @@ const providerIndex = ref(0)
 const provider = computed(() => searchProviders[providerIndex.value])
 const keyword = ref('')
 const isOpen = ref(false)
+const isChooserOpen = ref(false)
 const isComposing = ref(false)
-const input = useTemplateRef<HTMLInputElement>('input')
-const toggleButton = useTemplateRef<HTMLButtonElement>('toggleButton')
+const showSearchIcon = ref(false)
+const input = useTemplateRef<InputInstance>('input')
+const toggleButton = useTemplateRef<ButtonInstance>('toggleButton')
+const providerButton = useTemplateRef<HTMLButtonElement>('providerButton')
+const chooser = useTemplateRef<HTMLElement>('chooser')
+let iconTimer: number | undefined
 
 async function toggleSearch() {
   isOpen.value = !isOpen.value
@@ -41,7 +49,7 @@ async function toggleSearch() {
   }
   else {
     isComposing.value = false
-    toggleButton.value?.focus()
+    toggleButton.value?.ref?.focus()
   }
 }
 
@@ -64,7 +72,7 @@ function onSearchKeyDown(event: KeyboardEvent) {
   if (event.key === 'Enter' && event.repeat)
     event.preventDefault()
 
-  if (event.key === 'Tab' && event.target === input.value && !event.shiftKey
+  if (event.key === 'Tab' && event.target === input.value?.input && !event.shiftKey
     && !event.altKey && !event.ctrlKey && !event.metaKey) {
     event.preventDefault()
     if (!event.repeat)
@@ -77,13 +85,30 @@ function onSearchKeyDown(event: KeyboardEvent) {
   }
 }
 
-async function selectProvider(index: unknown) {
-  if (typeof index !== 'number' || !searchProviders[index])
-    return
-
-  providerIndex.value = index
+async function openChooser() {
+  isChooserOpen.value = true
   await nextTick()
-  input.value?.focus()
+  chooser.value?.querySelectorAll('button')[providerIndex.value]?.focus()
+}
+
+async function closeChooser(index?: number) {
+  isChooserOpen.value = false
+  if (index !== undefined)
+    providerIndex.value = index
+  await nextTick()
+  if (index === undefined)
+    providerButton.value?.focus()
+  else
+    input.value?.focus()
+}
+
+function onChooserTab(event: KeyboardEvent) {
+  const buttons = Array.from(chooser.value?.querySelectorAll('button') ?? [])
+  const current = buttons.findIndex(button => button === event.target)
+  const direction = event.shiftKey
+    ? -1
+    : 1
+  buttons[(current + direction + buttons.length) % buttons.length]?.focus()
 }
 
 function hideUnavailableIcon(event: Event) {
@@ -103,165 +128,220 @@ function submitSearch() {
   keyword.value = ''
 }
 
-onMounted(() => window.addEventListener('keydown', onWindowKeyDown))
-onUnmounted(() => window.removeEventListener('keydown', onWindowKeyDown))
+onMounted(() => {
+  window.addEventListener('keydown', onWindowKeyDown)
+  iconTimer = window.setInterval(() => {
+    showSearchIcon.value = !showSearchIcon.value
+  }, 2000)
+})
+onUnmounted(() => {
+  window.removeEventListener('keydown', onWindowKeyDown)
+  window.clearInterval(iconTimer)
+})
 </script>
 
 <template>
   <div class="search_main" :class="{ 'is-open': isOpen }" @keydown="onSearchKeyDown">
-    <form id="forest-search" class="search_form" role="search" aria-label="外部搜索" @submit.prevent="submitSearch">
-      <el-dropdown trigger="click" placement="bottom-start" @command="selectProvider">
-        <button type="button" class="search_provider" :aria-label="`搜索引擎：${provider.label}`">
-          <img :key="provider.label" :src="provider.icon" alt="" @error="hideUnavailableIcon">
-          <span>{{ provider.label }}</span>
-          <el-icon>
-            <CaretBottom />
-          </el-icon>
-        </button>
-        <template #dropdown>
-          <el-dropdown-menu class="provider_menu">
-            <el-dropdown-item v-for="(engine, index) in searchProviders" :key="engine.label" :command="index">
-              <img :src="engine.icon" alt="" @error="hideUnavailableIcon">
-              {{ engine.label }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <input
+    <form
+      id="forest-search"
+      role="search"
+      aria-label="外部搜索"
+      @submit.prevent="submitSearch"
+      @compositionstart="isComposing = true"
+      @compositionend="isComposing = false"
+    >
+      <el-input
         ref="input"
         v-model="keyword"
-        class="search_input"
-        type="search"
+        type="text"
         name="word"
         aria-label="搜索关键词"
         aria-describedby="forest-search-keys"
         placeholder="输入并搜索"
         enterkeyhint="search"
-        @compositionstart="isComposing = true"
-        @compositionend="isComposing = false"
+        :tabindex="isOpen ? 0 : -1"
       >
+        <template #prepend>
+          <button
+            ref="providerButton"
+            type="button"
+            class="search_icon"
+            :aria-label="`搜索引擎：${provider.label}`"
+            aria-haspopup="dialog"
+            :aria-expanded="isChooserOpen"
+            :tabindex="isOpen ? 0 : -1"
+            @click="openChooser"
+          >
+            <img :key="provider.label" class="search-icon-img" :src="provider.icon" alt="" draggable="false" @error="hideUnavailableIcon">
+            <el-icon>
+              <CaretBottom />
+            </el-icon>
+          </button>
+        </template>
+        <template #append>
+          <el-button
+            ref="toggleButton"
+            native-type="button"
+            :icon="isOpen ? ArrowLeftBold : (showSearchIcon ? Search : ArrowRightBold)"
+            :aria-label="isOpen ? '收起搜索' : '展开搜索'"
+            :aria-expanded="isOpen"
+            aria-controls="forest-search"
+            @click="toggleSearch"
+          />
+        </template>
+      </el-input>
       <span id="forest-search-keys" hidden>Tab 切换引擎，Shift+Tab 返回引擎按钮，Esc 收起搜索</span>
-      <button type="submit" class="search_submit" aria-label="搜索" title="搜索">
-        <el-icon :size="18">
-          <Search />
-        </el-icon>
-      </button>
     </form>
-    <button
-      ref="toggleButton"
-      type="button"
-      class="search_toggle"
-      :aria-label="isOpen ? '收起搜索' : '展开搜索'"
-      :aria-expanded="isOpen"
-      aria-controls="forest-search"
-      @click="toggleSearch"
-    >
-      <el-icon :size="18">
-        <component :is="isOpen ? ArrowLeftBold : Search" />
-      </el-icon>
-    </button>
+
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="isChooserOpen"
+          class="modal-mask"
+          @click.self="closeChooser()"
+          @keydown.esc.stop.prevent="closeChooser()"
+          @keydown.tab.prevent="onChooserTab"
+        >
+          <div ref="chooser" class="search_box" role="dialog" aria-modal="true" aria-label="选择搜索引擎">
+            <button v-for="(engine, index) in searchProviders" :key="engine.label" type="button" @click="closeChooser(index)">
+              <img class="icon-img" :src="engine.icon" alt="" draggable="false" @error="hideUnavailableIcon">
+              <span>{{ engine.label }}</span>
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <style scoped lang="scss">
+$search-height: 48px;
+$engine-size: 78px;
+
 .search_main {
-  --search-handle: 48px;
+  --search-width: min(500px, calc(100% - 20px));
+
   position: fixed;
   top: 70px;
-  left: 0;
+  left: calc(47px - var(--search-width));
   z-index: 999;
-  display: flex;
-  width: min(500px, calc(100% - 20px));
-  transform: translateX(calc(-100% + var(--search-handle)));
-  transition: transform 0.35s ease;
-  border-radius: 4px;
+  width: var(--search-width);
+  transition: left 0.35s ease-in-out;
 
   &.is-open {
-    transform: translateX(10px);
-    background: var(--el-bg-color, #fff);
-    box-shadow: 0 2px 10px rgb(0 0 0 / 30%);
+    left: 10px;
+  }
 
-    .search_form {
-      visibility: visible;
+  &:not(.is-open) {
+    :deep(.el-input-group__prepend),
+    :deep(.el-input__wrapper) {
+      pointer-events: none;
+    }
+  }
+
+  :deep(.el-input-group) {
+    height: 50px;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 30%);
+  }
+
+  :deep(.el-input-group__append),
+  :deep(.el-input-group__prepend) {
+    border-radius: 0;
+  }
+
+  :deep(.el-input-group__prepend) {
+    padding: 0;
+  }
+}
+
+.search-icon-img {
+  width: calc($search-height * 0.485);
+  height: calc($search-height * 0.485);
+  margin-right: calc($search-height * 0.1);
+  border-radius: 4px;
+  object-fit: cover;
+  user-select: none;
+}
+
+.search_icon {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.search_box {
+  position: fixed;
+  top: 130px;
+  left: 10px;
+  display: flex;
+  width: calc(3 * $engine-size);
+  max-width: calc(100% - 20px);
+  background-color: #fff;
+
+  button {
+    display: flex;
+    box-sizing: border-box;
+    height: $engine-size;
+    flex: 1 1 $engine-size;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: calc($search-height * 0.31) 4px calc($search-height * 0.22);
+    border: 1px solid rgb(243 243 243);
+    border-left: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+
+    &:first-child {
+      border-left: 1px solid rgb(243 243 243);
+    }
+
+    &:hover {
+      background-color: rgb(243 243 243);
     }
   }
 }
 
-.search_form {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  visibility: hidden;
+.icon-img {
+  width: calc($search-height * 0.543);
+  height: calc($search-height * 0.543);
+  margin-bottom: calc($search-height * 0.18);
+  object-fit: cover;
 }
 
-.search_toggle,
-.search_provider,
-.search_input,
-.search_submit {
-  min-height: 48px;
-  border: 0;
-  background: transparent;
-  color: var(--el-text-color-primary, #303133);
-  font: inherit;
-
+.search_icon,
+.search_box button {
   &:focus-visible {
     outline: 2px solid var(--el-color-primary, #409eff);
     outline-offset: -2px;
   }
 }
 
-.search_toggle,
-.search_provider,
-.search_submit {
-  cursor: pointer;
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  inset: 0;
+  background-color: rgb(0 0 0 / 60%);
+  transition: opacity 0.3s ease;
 }
 
-.search_toggle,
-.search_submit {
-  display: grid;
-  flex: 0 0 var(--search-handle);
-  place-items: center;
-}
-
-.search_toggle {
-  border-radius: 0 4px 4px 0;
-  background: var(--el-bg-color, #fff);
-  box-shadow: 0 2px 10px rgb(0 0 0 / 30%);
-}
-
-.is-open .search_toggle {
-  box-shadow: none;
-}
-
-.search_provider {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 7px;
-  white-space: nowrap;
-}
-
-.search_input {
-  flex: 1;
-  min-width: 0;
-  padding-inline: 8px;
-  border-inline: 1px solid var(--el-border-color, #dcdfe6);
-}
-
-.search_provider img,
-.provider_menu img {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  object-fit: contain;
-}
-
-.provider_menu img {
-  margin-right: 6px;
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .search_main {
+  .search_main,
+  .modal-mask {
     transition: none;
   }
 }

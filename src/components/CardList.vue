@@ -15,7 +15,8 @@ const tagTypes = new Map<string, TagProps['type']>([
 ])
 
 const fallbackIcon = '/error.gif'
-const hoverDisclosures = new WeakSet<HTMLDetailsElement>()
+const hoveredResource = ref<string>()
+const activatedResource = ref<string>()
 
 function replaceFailedIcon(event: Event) {
   const img = event.currentTarget
@@ -25,55 +26,61 @@ function replaceFailedIcon(event: Event) {
   }
 }
 
-function revealOnHover(event: PointerEvent) {
-  if (event.pointerType !== 'mouse' || !(event.currentTarget instanceof HTMLElement))
+function areLinksOpen(id: string) {
+  return hoveredResource.value === id || activatedResource.value === id
+}
+
+function revealOnHover(event: PointerEvent, id: string) {
+  if (event.pointerType === 'mouse')
+    hoveredResource.value = id
+}
+
+function toggleLinks(event: MouseEvent, id: string) {
+  const isMouseClick = event.detail > 0 && (!(event instanceof PointerEvent) || event.pointerType === 'mouse')
+  if (isMouseClick && hoveredResource.value === id)
     return
 
-  const details = event.currentTarget.parentElement
-  if (details instanceof HTMLDetailsElement && !details.open) {
-    details.open = true
-    hoverDisclosures.add(details)
-  }
+  const wasOpen = areLinksOpen(id)
+  if (hoveredResource.value === id)
+    hoveredResource.value = undefined
+  activatedResource.value = wasOpen ? undefined : id
 }
 
-function keepHoveredLinks(event: MouseEvent) {
-  if (!event.detail || (event instanceof PointerEvent && event.pointerType !== 'mouse')
-    || !(event.currentTarget instanceof HTMLElement)) {
+function closeAfterHover(event: PointerEvent, id: string) {
+  if (event.pointerType !== 'mouse' || hoveredResource.value !== id)
     return
+
+  hoveredResource.value = undefined
+  const card = event.currentTarget
+  const focus = document.activeElement
+  if (activatedResource.value !== id && card instanceof HTMLElement && focus instanceof HTMLAnchorElement && card.contains(focus))
+    card.querySelector<HTMLButtonElement>('.card_r')?.focus({ preventScroll: true })
+}
+
+function keepLinksForKeyboard(event: KeyboardEvent, id: string) {
+  if (!event.shiftKey && hoveredResource.value === id)
+    activatedResource.value = id
+}
+
+function closeAfterFocus(event: FocusEvent, id: string) {
+  const { currentTarget, relatedTarget } = event
+  if (activatedResource.value === id && currentTarget instanceof HTMLElement
+    && !(relatedTarget instanceof Node && currentTarget.contains(relatedTarget))) {
+    activatedResource.value = undefined
   }
-
-  const details = event.currentTarget.parentElement
-  if (details instanceof HTMLDetailsElement && details.open && hoverDisclosures.has(details))
-    event.preventDefault()
 }
 
-function dismissHoveredLinks(card: HTMLElement, focus: EventTarget | null) {
-  const details = card.querySelector('details')
-  if (details && hoverDisclosures.has(details) && !(focus instanceof Node && details.contains(focus))) {
-    details.open = false
-    hoverDisclosures.delete(details)
-  }
-}
-
-function closeAfterHover(event: PointerEvent) {
-  if (event.pointerType === 'mouse' && event.currentTarget instanceof HTMLElement)
-    dismissHoveredLinks(event.currentTarget, document.activeElement)
-}
-
-function closeAfterFocus(event: FocusEvent) {
-  if (event.currentTarget instanceof HTMLElement && !event.currentTarget.matches(':hover'))
-    dismissHoveredLinks(event.currentTarget, event.relatedTarget)
-}
-
-function closeFromKeyboard(event: KeyboardEvent) {
-  const details = event.currentTarget
-  if (!(details instanceof HTMLDetailsElement) || !details.open)
+function closeFromKeyboard(event: KeyboardEvent, id: string) {
+  const card = event.currentTarget
+  if (!areLinksOpen(id) || !(card instanceof HTMLElement))
     return
 
   event.preventDefault()
-  details.open = false
-  hoverDisclosures.delete(details)
-  details.querySelector('summary')?.focus()
+  if (hoveredResource.value === id)
+    hoveredResource.value = undefined
+  if (activatedResource.value === id)
+    activatedResource.value = undefined
+  card.querySelector<HTMLButtonElement>('.card_r')?.focus()
 }
 </script>
 
@@ -84,7 +91,14 @@ function closeFromKeyboard(event: KeyboardEvent) {
     </h2>
     <el-row :gutter="15">
       <el-col v-for="item in resources" :key="item.id" class="resource_col" :xs="24" :sm="12" :md="8" :lg="6">
-        <el-card class="resource_card" shadow="hover" :body-style="{ padding: 0 }" @pointerleave="closeAfterHover" @focusout="closeAfterFocus">
+        <el-card
+          class="resource_card"
+          shadow="hover"
+          :body-style="{ padding: 0 }"
+          @pointerleave="closeAfterHover($event, item.id)"
+          @focusout="closeAfterFocus($event, item.id)"
+          @keydown.esc="closeFromKeyboard($event, item.id)"
+        >
           <div class="card_main">
             <div class="card_l">
               <div class="logo">
@@ -113,17 +127,43 @@ function closeFromKeyboard(event: KeyboardEvent) {
                 </p>
               </el-tooltip>
             </div>
-            <details class="card_r" @keydown.esc="closeFromKeyboard">
-              <summary :aria-label="`${item.title} 文档链接`" @pointerenter="revealOnHover" @click="keepHoveredLinks">
-                <el-icon :size="15">
-                  <DArrowRight />
-                </el-icon>
-              </summary>
-              <div class="switch_box">
-                <a v-if="item.url.zh" :href="item.url.zh" target="_blank" rel="noopener" :aria-label="`${item.title} 中文文档`">中文</a>
-                <a v-if="item.url.en" :href="item.url.en" target="_blank" rel="noopener" :aria-label="`${item.title} 英文文档`">英文</a>
-              </div>
-            </details>
+            <button
+              type="button"
+              class="card_r"
+              :aria-label="`${item.title} 文档链接`"
+              :aria-controls="`resource-links-${item.id}`"
+              :aria-expanded="areLinksOpen(item.id)"
+              @pointerenter="revealOnHover($event, item.id)"
+              @click="toggleLinks($event, item.id)"
+              @keydown.tab="keepLinksForKeyboard($event, item.id)"
+            >
+              <el-icon :size="15">
+                <DArrowRight />
+              </el-icon>
+            </button>
+            <div
+              :id="`resource-links-${item.id}`"
+              class="switch_box"
+              :class="{ 'is-open': areLinksOpen(item.id) }"
+              :aria-hidden="!areLinksOpen(item.id)"
+            >
+              <a
+                v-if="item.url.zh"
+                :href="item.url.zh"
+                target="_blank"
+                rel="noopener"
+                :aria-label="`${item.title} 中文文档`"
+                :tabindex="areLinksOpen(item.id) ? undefined : -1"
+              >中文</a>
+              <a
+                v-if="item.url.en"
+                :href="item.url.en"
+                target="_blank"
+                rel="noopener"
+                :aria-label="`${item.title} 英文文档`"
+                :tabindex="areLinksOpen(item.id) ? undefined : -1"
+              >英文</a>
+            </div>
           </div>
         </el-card>
       </el-col>
