@@ -1,6 +1,6 @@
 # FF-02 项目审查与修复计划
 
-**状态** 四批均已验收，实际发布待确认
+**状态** 四批均已验收，已发布
 
 审查基线为 FF-01 提交 `6e257e7`。覆盖首页、外部搜索、资源卡、播放器、404、客户端路由、项目自有类型和构建发布配置。
 
@@ -86,4 +86,10 @@ release='<GitHub Actions 运行号>-<尝试号>'
 python3 -B "/www/.frontend-forest-deploy/incoming/$release/frontend_forest_deploy.py" rollback /www/wwwroot/frontend-forest "$release"
 ```
 
-生产服务器本批仅做只读核查。实际发布待确认。
+## 生产发布验收
+
+2026-11-10 经确认发布 `d1036e9`。Actions 通过冻结安装、生产构建、9 项发布回归、上传和目录交换。发布编号为 `42748565811-1`。[Deploy 运行记录](https://github.com/HuberyYang-Space/frontend-forest/actions/runs/42748565811)
+
+- 源站首页、深层路由、`/loading.gif` 和首页引用的 6 个入口资源均返回 HTTP 200，响应与磁盘文件逐字节一致。线上首页 SHA-256 为 `0925b867d6bea5bef05aaa743908931c292b754b8c3bc025e04a0beba38b8fe2`，与本地生产构建一致。
+- 从服务器按正常 DNS 请求公开域名，首页返回 HTTP 200，SHA-256 与源站一致。
+- 现网站点和回滚目录的设备及 inode 与交换记录一致。旧版在 `/www/.frontend-forest-deploy/releases/42748565811-1`，首页 SHA-256 为 `8e32f3d1f493429279490185dbdf8ac8fefe110e385e71d14a113c6ab7f52fbb`，与发布前一致。回滚脚本已核对存在。
