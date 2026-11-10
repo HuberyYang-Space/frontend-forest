@@ -16,12 +16,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
-      - uses: pnpm/setup@v1
+      - uses: pnpm/setup@v3.1.2
         with:
-          version: 11.22.0
-          runtime: node@24
+          runtime: node@26
           cache: true
           install: false
 

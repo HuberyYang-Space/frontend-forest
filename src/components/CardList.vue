@@ -29,7 +29,9 @@ function handleTagColor(tag: string[]) {
       curTag = item as keyof TagTypes
   })
 
-  return tagTypes[curTag as keyof TagTypes] || (tagTypes[curTag as keyof TagTypes] === 'primary' ? '' : 'info')
+  return tagTypes[curTag as keyof TagTypes] || (tagTypes[curTag as keyof TagTypes] === 'primary'
+    ? ''
+    : 'info')
 }
 
 function handleRedirect(url: string) {

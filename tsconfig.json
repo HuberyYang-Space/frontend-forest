@@ -3,17 +3,15 @@
     "target": "ESNext",
     "jsx": "preserve",
     "lib": ["DOM", "ESNext"],
-    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "~/*": ["src/*"],
-      "@/*": ["src/*"]
+      "~/*": ["./src/*"],
+      "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "types": [
-      "vite/client",
-      "unplugin-vue-router/client"
+      "vite/client"
     ],
     "allowJs": true,
     "strict": true,
@@ -28,7 +26,6 @@
   "exclude": [
     "dist",
     "node_modules",
-    "eslint.config.ts",
     "commitlint.config.js"
   ]
 }

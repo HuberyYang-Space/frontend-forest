@@ -30,9 +30,8 @@ if (import.meta.hot) {
   handleHotUpdate(router)
 }
 
-router.beforeEach((_to, _from, next) => {
+router.beforeEach(() => {
   NProgress.start()
-  next()
 })
 
 router.afterEach((_to, _from) => {

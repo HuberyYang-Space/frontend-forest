@@ -1,3 +1,4 @@
+import type { Ref } from 'vue'
 import { nanoid } from 'nanoid'
 
 interface NavItem {
@@ -8,22 +9,38 @@ interface NavItem {
 }
 
 const navList: NavItem[] = [
-  { id: nanoid(), navName: '博客', active: false, href: 'https://blog.huberyyang.site' },
-  { id: nanoid(), navName: 'GitHub', active: false, href: 'https://github.com/Hub-yang' },
-  { id: nanoid(), navName: '主页', active: false, href: 'https://react.huberyyang.site' },
-  { id: nanoid(), navName: '音乐', active: false, href: 'https://music.huberyyang.site' },
+  {
+    id: nanoid(),
+    navName: '博客',
+    active: false,
+    href: 'https://blog.huberyyang.site',
+  },
+  {
+    id: nanoid(),
+    navName: 'GitHub',
+    active: false,
+    href: 'https://github.com/Hub-yang',
+  },
+  {
+    id: nanoid(),
+    navName: '主页',
+    active: false,
+    href: 'https://react.huberyyang.site',
+  },
+  {
+    id: nanoid(),
+    navName: '音乐',
+    active: false,
+    href: 'https://music.huberyyang.site',
+  },
 ]
 
-export default function () {
-  const nav = ref()
+export default function (nav: Readonly<Ref<HTMLElement | null>>) {
   const navActive = ref(false)
   const list = ref(navList)
 
   const fixNav = () => {
-    if (window.scrollY > nav.value?.offsetHeight)
-      navActive.value = true
-    else
-      navActive.value = false
+    navActive.value = nav.value !== null && window.scrollY > nav.value.offsetHeight
   }
 
   onMounted(() => window.addEventListener('scroll', fixNav))
@@ -35,5 +52,5 @@ export default function () {
     })
   }
 
-  return { nav, navActive, navList, handleClickNav }
+  return { navActive, navList, handleClickNav }
 }

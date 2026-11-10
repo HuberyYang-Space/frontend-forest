@@ -2,14 +2,11 @@ import path from 'node:path'
 import process from 'node:process'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
-import IconsResolver from 'unplugin-icons/resolver'
-import Icons from 'unplugin-icons/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
-import { VueRouterAutoImports } from 'unplugin-vue-router'
-import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig, loadEnv } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import VueRouter from 'vue-router/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -17,28 +14,29 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
   return defineConfig({
     plugins: [
+      VueRouter({ dts: 'src/route-map.d.ts' }),
       vue(),
       vueDevTools(),
-      VueRouter({}),
       AutoImport({
-        imports: ['vue', VueRouterAutoImports],
+        imports: ['vue'],
+        dtsMode: 'overwrite',
         dirs: ['./src/utils/**'],
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          ElementPlusResolver(),
+        ],
       }),
       Components({
         include: [/\.vue$/, /\.vue\?vue/],
-        resolvers: [ElementPlusResolver(), IconsResolver()],
-      }),
-      Icons({
-        compiler: 'vue3',
-        autoInstall: true,
+        resolvers: [
+          ElementPlusResolver(),
+        ],
       }),
     ],
     // alias别名设置
     resolve: {
       alias: {
-        '~': path.resolve(__dirname, './src'),
-        '@': path.resolve(__dirname, './src'),
+        '~': path.resolve(import.meta.dirname, './src'),
+        '@': path.resolve(import.meta.dirname, './src'),
       },
     },
     // 服务设置
@@ -56,11 +54,21 @@ export default defineConfig(({ mode }) => {
     },
     // build配置
     build: {
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
+      target: [
+        'es2020',
+        'edge88',
+        'firefox78',
+        'chrome87',
+        'safari14',
+      ],
+      rolldownOptions: {
+        output: {
+          minify: {
+            compress: {
+              dropConsole: true,
+              dropDebugger: true,
+            },
+          },
         },
       },
       reportCompressedSize: false,
@@ -71,7 +79,6 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          api: 'modern-compiler',
           additionalData: '@use "~/styles/variables.scss" as *;',
         },
       },

@@ -1,7 +1,8 @@
 <script setup lang='ts'>
 import useNavFixed from '~/hooks/useNavFixed'
 
-const { nav: navEl, navActive, navList, handleClickNav } = useNavFixed() as AnyKey
+const nav = useTemplateRef<HTMLElement>('navEl')
+const { navActive, navList, handleClickNav } = useNavFixed(nav)
 </script>
 
 <template>

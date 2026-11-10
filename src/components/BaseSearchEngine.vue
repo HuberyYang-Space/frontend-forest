@@ -83,7 +83,9 @@ function handleModalClose(index: number) {
 }
 
 function handleSearchMainOpen() {
-  searchMainLeft.value = searchMainLeft.value === 10 ? -453 : 10
+  searchMainLeft.value = searchMainLeft.value === 10
+    ? -453
+    : 10
   isOpen.value = !isOpen.value
 }
 
