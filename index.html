@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
@@ -14,30 +14,24 @@
         background-repeat: no-repeat;
         background-size: 160px 120px;
         background-position: center center;
-        /* background-color: rgba(255, 255, 255, 0.5); */
       }
     </style>
   </head>
 
   <body>
-    <div id="app" style="display: none"></div>
+    <div id="app" hidden></div>
     <!-- 加载占位 -->
     <div id="load_screen"></div>
     <script type="module" src="/src/main.ts"></script>
     <script>
-      document.onreadystatechange = loadLoading
-      function loadLoading() {
-        if (document.readyState == 'complete') {
-          document.body.removeChild(document.getElementById('load_screen'))
-          const root = document.getElementById('app')
-          root.style.display = 'block'
-          // kanbaniang online
-          // const script = document.createElement('script')
-          // script.src = 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js'
-          // document.body.appendChild(script)
-          return
-        }
-      }
+      window.addEventListener(
+        'load',
+        () => {
+          document.getElementById('load_screen')?.remove()
+          document.getElementById('app')?.removeAttribute('hidden')
+        },
+        { once: true },
+      )
     </script>
   </body>
 </html>

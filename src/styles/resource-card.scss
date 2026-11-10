@@ -1,0 +1,140 @@
+@use '~/styles/variables.scss' as *;
+
+.ary_container,
+.resource_col {
+  margin-top: 20px;
+}
+
+.ary_title {
+  font-size: 1.5rem;
+
+  &::before {
+    content: '|';
+    display: inline-block;
+    font-size: 30px;
+    font-weight: bolder;
+    color: #397de5;
+  }
+}
+
+.resource_card,
+.card_main {
+  height: 100px;
+}
+
+.card_main {
+  position: relative;
+  display: flex;
+}
+
+.card_l {
+  display: flex;
+  flex-basis: 70px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 15px;
+
+  .logo {
+    opacity: 0.8;
+    transition: $com-transition;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+
+    &.err {
+      width: 60px;
+      height: 60px;
+    }
+  }
+}
+
+.resource_card:hover .logo {
+  opacity: 1;
+  filter: saturate(150%);
+}
+
+.card_m {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-evenly;
+  overflow: hidden;
+
+  .title {
+    color: #000;
+    font-size: 19px;
+    font-weight: 900;
+  }
+
+  .des {
+    overflow: hidden;
+    color: #6e757c;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tags {
+    white-space: nowrap;
+
+    .el-tag + .el-tag {
+      margin-left: 5px;
+    }
+  }
+}
+
+.card_r {
+  flex: 0 0 max(44px, 10%);
+
+  summary {
+    display: grid;
+    height: 100%;
+    place-items: center;
+    color: #606266;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--el-color-primary, #409eff);
+      outline-offset: -2px;
+    }
+  }
+}
+
+.switch_box {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: max(44px, 10%);
+  bottom: 0;
+  left: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgb(0 0 0 / 10%);
+  backdrop-filter: blur(8px);
+
+  a {
+    display: grid;
+    width: min(60px, calc((100% - 12px) / 2));
+    height: 48px;
+    place-items: center;
+    border-radius: 999px;
+    background: #1f1f1f;
+    color: #fff;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: #ff999b;
+    }
+  }
+}

@@ -10,8 +10,11 @@ import VueRouter from 'vue-router/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // 获取环境变量
-  const env = loadEnv(mode, process.cwd())
+  const {
+    VITE_APP_BASE_API: proxyPath,
+    VITE_APP_REQUEST_API: proxyTarget,
+    VITE_APP_TRUE_API: proxyPrefix,
+  } = loadEnv(mode, process.cwd())
   return defineConfig({
     plugins: [
       VueRouter({ dts: 'src/route-map.d.ts' }),
@@ -20,7 +23,6 @@ export default defineConfig(({ mode }) => {
       AutoImport({
         imports: ['vue'],
         dtsMode: 'overwrite',
-        dirs: ['./src/utils/**'],
         resolvers: [
           ElementPlusResolver(),
         ],
@@ -36,7 +38,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '~': path.resolve(import.meta.dirname, './src'),
-        '@': path.resolve(import.meta.dirname, './src'),
       },
     },
     // 服务设置
@@ -44,13 +45,15 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: 5173,
       open: false,
-      proxy: {
-        [env.VITE_APP_BASE_API]: {
-          target: env.VITE_APP_REQUEST_API,
-          changeOrigin: true,
-          rewrite: (pathStr: string) => pathStr.replace(env.VITE_APP_BASE_API, env.VITE_APP_TRUE_API),
-        },
-      },
+      proxy: proxyPath && proxyTarget && proxyPrefix !== undefined
+        ? {
+            [proxyPath]: {
+              target: proxyTarget,
+              changeOrigin: true,
+              rewrite: pathStr => pathStr.replace(proxyPath, proxyPrefix),
+            },
+          }
+        : undefined,
     },
     // build配置
     build: {

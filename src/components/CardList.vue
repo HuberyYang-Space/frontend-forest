@@ -1,85 +1,55 @@
 <script setup lang="ts">
-interface TagTypes {
-  js: 'warning'
-  css: 'danger'
-  vue: 'success'
-  react: 'primary'
-}
+import type { TagProps } from 'element-plus'
+import type { Resource } from '~/data/resources'
+import { DArrowRight } from '@element-plus/icons-vue'
 
-const props = defineProps(['title', 'tabList'])
+defineProps<{
+  title: string
+  resources: readonly Resource[]
+}>()
 
-const tagTypes: TagTypes = {
-  js: 'warning',
-  css: 'danger',
-  vue: 'success',
-  react: 'primary',
-}
+const tagTypes = new Map<string, TagProps['type']>([
+  ['js', 'warning'],
+  ['vue', 'success'],
+  ['react', 'primary'],
+])
 
-const data = ref<any[]>([])
+const fallbackIcon = '/error.gif'
 
-watch(() => props.tabList, (val) => {
-  data.value = val
-}, { immediate: true })
-
-function handleTagColor(tag: string[]) {
-  const keys = Object.keys(tagTypes)
-  let curTag = ''
-  keys.forEach((item) => {
-    if (tag.includes(item))
-      curTag = item as keyof TagTypes
-  })
-
-  return tagTypes[curTag as keyof TagTypes] || (tagTypes[curTag as keyof TagTypes] === 'primary'
-    ? ''
-    : 'info')
-}
-
-function handleRedirect(url: string) {
-  window.open(url, '_blank')
-}
-
-// 图片加载失败的默认行为
-function imgerror(event: AnyKey) {
-  const img = event.srcElement
-  img.src = new URL('/error.gif', import.meta.url).href
-  img.onerror = null
-  img.classList.add('err')
-}
-
-function onCardMouseFocus(item: AnyKey) {
-  item.showConfig = true
-}
-function onCardMouseLeave(item: AnyKey) {
-  item.showConfig = false
+function replaceFailedIcon(event: Event) {
+  const img = event.currentTarget
+  if (img instanceof HTMLImageElement && img.getAttribute('src') !== fallbackIcon) {
+    img.src = fallbackIcon
+    img.classList.add('err')
+  }
 }
 </script>
 
 <template>
-  <div class="ary_container">
-    <!-- 类别分组标题 -->
-    <div class="ary_title">
+  <section class="ary_container">
+    <h2 class="ary_title">
       {{ title }}
-    </div>
+    </h2>
     <el-row :gutter="15">
-      <el-col v-for="tab in data" :key="tab.id" :span="6">
-        <el-card shadow="hover" :body-style="{ padding: 0 }" @mouseleave="onCardMouseLeave(tab)">
+      <el-col v-for="item in resources" :key="item.id" class="resource_col" :xs="24" :sm="12" :md="8" :lg="6">
+        <el-card class="resource_card" shadow="hover" :body-style="{ padding: 0 }">
           <div class="card_main">
             <div class="card_l">
               <div class="logo">
-                <img :src="tab.iconUrl" :onerror="(e:AnyKey) => imgerror(e)">
+                <img :src="item.iconUrl" alt="" @error="replaceFailedIcon">
               </div>
             </div>
             <div class="card_m">
               <p class="title">
-                {{ tab.title }}
+                {{ item.title }}
               </p>
               <div class="tags">
-                <el-tag v-for="(tag, index) in tab.tags" :key="index" :type="handleTagColor(tag)" round>
+                <el-tag v-for="tag in item.tags" :key="tag" :type="tagTypes.get(tag) ?? 'info'" round>
                   {{ tag }}
                 </el-tag>
               </div>
               <el-tooltip
-                :content="tab.content"
+                :content="item.content"
                 placement="bottom"
                 effect="dark"
                 :show-arrow="false"
@@ -87,31 +57,28 @@ function onCardMouseLeave(item: AnyKey) {
                 :show-after="300"
               >
                 <p class="des">
-                  {{ tab.content }}
+                  {{ item.content }}
                 </p>
               </el-tooltip>
             </div>
-            <div class="card_r" @mouseenter="onCardMouseFocus(tab)">
-              <el-icon :size="15">
-                <DArrowRight />
-              </el-icon>
-            </div>
-            <!-- language choose -->
-            <div class="switch_box" :class="[tab.showConfig ? 'active' : 'disabled']">
-              <div v-if="tab.url.zh" class="zh" @click="handleRedirect(tab.url.zh)">
-                中文
+            <details class="card_r">
+              <summary :aria-label="`${item.title} 文档链接`">
+                <el-icon :size="15">
+                  <DArrowRight />
+                </el-icon>
+              </summary>
+              <div class="switch_box">
+                <a v-if="item.url.zh" :href="item.url.zh" target="_blank" rel="noopener" :aria-label="`${item.title} 中文文档`">中文</a>
+                <a v-if="item.url.en" :href="item.url.en" target="_blank" rel="noopener" :aria-label="`${item.title} 英文文档`">英文</a>
               </div>
-              <div v-if="tab.url.en" class="en" @click="handleRedirect(tab.url.en)">
-                英文
-              </div>
-            </div>
+            </details>
           </div>
         </el-card>
       </el-col>
     </el-row>
-  </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>
-@use '@/styles/homepage.scss';
+@use '~/styles/resource-card.scss';
 </style>

@@ -14,16 +14,18 @@ const imgs = {
         <div class="text_404">
           404
         </div>
-        <span class="btn-go-home" @click="$router.replace('/')">返回首页</span>
+        <RouterLink class="btn-go-home" to="/" replace>
+          返回首页
+        </RouterLink>
       </div>
       <div class="objects">
-        <img class="object_rocket" :src="imgs.rocket" width="40px">
+        <img class="object_rocket" :src="imgs.rocket" width="40" alt="">
         <div class="earth-moon">
-          <img class="object_earth" :src="imgs.earth" width="100px">
-          <img class="object_moon" :src="imgs.moon" width="80px">
+          <img class="object_earth" :src="imgs.earth" width="100" alt="">
+          <img class="object_moon" :src="imgs.moon" width="80" alt="">
         </div>
         <div class="box_astronaut">
-          <img class="object_astronaut" :src="imgs.astronaut" width="140px">
+          <img class="object_astronaut" :src="imgs.astronaut" width="140" alt="">
         </div>
       </div>
       <div class="glowing_stars">

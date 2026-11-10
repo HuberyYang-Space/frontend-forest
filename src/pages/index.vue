@@ -1,68 +1,80 @@
 <script setup lang="ts">
-import type { MenuList } from '~/config/nav'
+import APlayer from 'aplayer'
 import Nav from '~/components/Nav.vue'
-import { getNavList } from '~/config/nav'
-import { fetchPlayList } from '~/config/playList'
-import { startParallaxRolling } from '~/utils/startParallaxRolling'
+import { useParallax } from '~/composables/useParallax'
+import { resourceGroups } from '~/data/resources'
+import { fetchPlaylist } from '~/services/playlist'
+import 'aplayer/dist/APlayer.min.css'
 
 const CardList = defineAsyncComponent(() => import('~/components/CardList.vue'))
 const BaseSearchEngine = defineAsyncComponent(() => import('~/components/BaseSearchEngine.vue'))
 
-const menuList = ref<MenuList>()
 const currentYear = new Date().getFullYear()
-const fetchLoading = ref(true)
+const hero = useTemplateRef<HTMLElement>('hero')
+const catalog = useTemplateRef<HTMLElement>('catalog')
+const playerContainer = useTemplateRef<HTMLDivElement>('playerContainer')
+const playlistController = new AbortController()
+let player: APlayer | undefined
 
-function handlerScroll() {
-  const main = document.querySelector('.main_container') as HTMLElement
-  const value = main.getBoundingClientRect().top - 60
-  window.scrollTo({
-    top: value,
-    behavior: 'smooth',
+useParallax(hero)
+
+function scrollToCatalog() {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  catalog.value?.scrollIntoView({
+    behavior: reduceMotion ? 'auto' : 'smooth',
   })
 }
+
 onMounted(async () => {
-  startParallaxRolling()
-  const instance = getCurrentInstance() as any
-  const APlayer = instance.appContext.config.globalProperties.$aplayer
-  menuList.value = await getNavList() || []
-  fetchLoading.value = false
-  ;(window as any).ap = new APlayer({
-    container: document.getElementById('player'),
+  const audio = await fetchPlaylist(playlistController.signal)
+  const container = playerContainer.value
+  if (!container || !audio.length || playlistController.signal.aborted)
+    return
+
+  player = new APlayer({
+    container,
     fixed: true,
     lrcType: 3,
-    audio: await fetchPlayList(),
+    audio,
   })
+})
+
+onBeforeUnmount(() => {
+  playlistController.abort()
+  player?.destroy()
 })
 </script>
 
 <template>
   <div class="body">
-    <div id="player" />
+    <div id="player" ref="playerContainer" />
     <el-backtop :right="30" :bottom="80" :visibility-height="100" />
     <Nav />
-    <section class="section">
+    <section ref="hero" class="section">
       <h2 id="text">
         <span>前端资源一站式导航</span><br><span>前端森林</span>
       </h2>
-      <img id="bird1" src="/images/bird1.png">
-      <img id="bird2" src="/images/bird2.png">
-      <img id="forest" src="/images/forest.png">
-      <span id="btn" @click="handlerScroll"><el-icon v-if="fetchLoading" class="rotate"><Loading /></el-icon>前往</span>
-      <img id="rocks" src="/images/rocks.png">
-      <img id="water" src="/images/water.png">
+      <img id="bird1" src="/images/bird1.png" alt="">
+      <img id="bird2" src="/images/bird2.png" alt="">
+      <img id="forest" src="/images/forest.png" alt="">
+      <button id="btn" type="button" @click="scrollToCatalog">
+        前往
+      </button>
+      <img id="rocks" src="/images/rocks.png" alt="">
+      <img id="water" src="/images/water.png" alt="">
     </section>
 
-    <main v-if="!fetchLoading" class="main_container">
+    <main ref="catalog" class="main_container">
       <BaseSearchEngine />
-      <CardList v-for="({ title = '', data = [] }, idx) in menuList" :key="idx" :title="title" :tab-list="data" />
+      <CardList v-for="{ title, resources } in resourceGroups" :key="title" :title :resources />
     </main>
 
-    <footer v-if="!fetchLoading" class="footer_container">
+    <footer class="footer_container">
       <span>&#169; HuberyYang 2022 - {{ currentYear }} </span>
     </footer>
   </div>
 </template>
 
 <style scoped lang="scss">
-@use '@/styles/homepage.scss';
+@use '~/styles/homepage.scss';
 </style>

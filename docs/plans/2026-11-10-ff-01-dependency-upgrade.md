@@ -85,7 +85,7 @@
 
 ## 批次 4 · 运行时依赖与最终验收
 
-- [x] 升级 Element Plus、Axios 和 Nano ID。Nano ID 6 要求 Node `^22 || ^24 || >=26`，[导航 hook](../../src/hooks/useNavFixed.ts)的 ESM 命名导入可沿用。Axios 的生产使用点是 [播放列表请求](../../src/config/playList.ts)，Element Plus 的主要验证点是 [首页](../../src/pages/index.vue)、[卡片](../../src/components/CardList.vue)和[搜索组件](../../src/components/BaseSearchEngine.vue)。 [Nano ID 6](https://github.com/ai/nanoid/releases/tag/6.0.0) · [Axios 发布记录](https://github.com/axios/axios/releases) · [Element Plus 2.14.8](https://github.com/element-plus/element-plus/releases/tag/2.14.8)
+- [x] 升级 Element Plus、Axios 和 Nano ID。Nano ID 6 要求 Node `^22 || ^24 || >=26`，[导航组合式函数](../../src/composables/useNavFixed.ts)的 ESM 命名导入可沿用。Axios 的生产使用点是 [播放列表请求](../../src/services/playlist.ts)，Element Plus 的主要验证点是 [首页](../../src/pages/index.vue)、[卡片](../../src/components/CardList.vue)和[搜索组件](../../src/components/BaseSearchEngine.vue)。 [Nano ID 6](https://github.com/ai/nanoid/releases/tag/6.0.0) · [Axios 发布记录](https://github.com/axios/axios/releases) · [Element Plus 2.14.8](https://github.com/element-plus/element-plus/releases/tag/2.14.8)
 - [x] 对照基线复测资源卡、中文文案、搜索面板、图标和播放器。验证播放列表成功和失败时首页目录均可用。第三方服务不可达时，分开记录外部状态和可控输入下的回归证据。
 - [x] 最终在干净安装上执行全套检查，核对版本、路由与静态产物，记录未升级项、实际浏览器覆盖和剩余风险。确认临时文件清理后更新待办。
 

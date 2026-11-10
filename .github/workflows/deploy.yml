@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-my-blog
-  cancel-in-progress: true
+  group: deploy-frontend-forest
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -28,7 +28,11 @@ jobs:
 
       - run: pnpm build
 
-      - run: tar -czf dist.tar.gz -C dist/ .
+      - run: python3 -B -m unittest discover -s .github/scripts -p 'test_*.py'
+
+      - run: |
+          tar -czf dist.tar.gz -C dist/ .
+          cp .github/scripts/frontend_forest_deploy.py frontend_forest_deploy.py
 
       - uses: appleboy/scp-action@v1.0.0
         with:
@@ -37,8 +41,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           fingerprint: ${{ secrets.SERVER_HOST_FINGERPRINT }}
           port: 22
-          source: dist.tar.gz
-          target: /www/wwwroot/frontend-forest/
+          source: dist.tar.gz,frontend_forest_deploy.py
+          target: /www/.frontend-forest-deploy/incoming/${{ github.run_id }}-${{ github.run_attempt }}/
 
       - uses: appleboy/ssh-action@v1.2.5
         with:
@@ -48,7 +52,8 @@ jobs:
           fingerprint: ${{ secrets.SERVER_HOST_FINGERPRINT }}
           port: 22
           script: |
-            cd /www/wwwroot/frontend-forest/ || exit 1
-            find . -mindepth 1 ! -name 'dist.tar.gz' -exec rm -rf {} +
-            tar -xzf dist.tar.gz
-            rm dist.tar.gz
+            set -eu
+            release='${{ github.run_id }}-${{ github.run_attempt }}'
+            cd "/www/.frontend-forest-deploy/incoming/$release"
+            python3 -B frontend_forest_deploy.py publish /www/wwwroot/frontend-forest "$release" dist.tar.gz
+            rm -f -- dist.tar.gz || printf '%s\n' '发布已切换，归档清理失败' >&2

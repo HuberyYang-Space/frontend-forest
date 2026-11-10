@@ -11,5 +11,5 @@
 2026-11-10 核对了 `dev` 分支的 `4643e35`。
 
 - 站点使用 Vue、TypeScript、Vite 和 Element Plus，构建为静态站点。部署流程见 [GitHub Actions](../.github/workflows/deploy.yml)。
-- [资源清单](../src/config/nav.ts)收录 27 项资源，分为「框架与生态」和「打包/构建工具」。[现有搜索](../src/components/BaseSearchEngine.vue)会打开外部搜索引擎。
+- [资源清单](../src/data/resources.ts)收录 27 项资源，分为「框架与生态」和「打包/构建工具」。[现有搜索](../src/components/BaseSearchEngine.vue)会打开外部搜索引擎。
 - 接手时用现有依赖执行 `eslint .` 和 `vue-tsc` 均通过。隔离副本的默认构建报文件监听 `EMFILE`，启用 `CHOKIDAR_USEPOLLING=true` 后成功生成 `dist/index.html`。
