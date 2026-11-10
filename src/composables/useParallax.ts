@@ -18,7 +18,11 @@ export function useParallax(section: Readonly<Ref<HTMLElement | null>>) {
     if (!text || !bird1 || !bird2 || !button || !rocks || !forest || !water)
       return
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const update = () => {
+      if (reducedMotion.matches)
+        return
+
       const { scrollY } = window
       text.style.top = `${35 - scrollY / 100}%`
       bird1.style.top = `${scrollY * -0.03}px`

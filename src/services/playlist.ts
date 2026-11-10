@@ -8,7 +8,7 @@ const albums = [
 ]
 
 const mediaOrigin = 'https://www.huberyyang.site'
-const playlistEndpoint = 'https://huberyyang.site:83/api/getFileList'
+const playlistEndpoint = '/api/getFileList'
 const requestTimeout = 8000
 
 function encodeObjectKey(key: string) {

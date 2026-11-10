@@ -15,6 +15,7 @@ const tagTypes = new Map<string, TagProps['type']>([
 ])
 
 const fallbackIcon = '/error.gif'
+const hoverDisclosures = new WeakSet<HTMLDetailsElement>()
 
 function replaceFailedIcon(event: Event) {
   const img = event.currentTarget
@@ -22,6 +23,57 @@ function replaceFailedIcon(event: Event) {
     img.src = fallbackIcon
     img.classList.add('err')
   }
+}
+
+function revealOnHover(event: PointerEvent) {
+  if (event.pointerType !== 'mouse' || !(event.currentTarget instanceof HTMLElement))
+    return
+
+  const details = event.currentTarget.parentElement
+  if (details instanceof HTMLDetailsElement && !details.open) {
+    details.open = true
+    hoverDisclosures.add(details)
+  }
+}
+
+function keepHoveredLinks(event: MouseEvent) {
+  if (!event.detail || (event instanceof PointerEvent && event.pointerType !== 'mouse')
+    || !(event.currentTarget instanceof HTMLElement)) {
+    return
+  }
+
+  const details = event.currentTarget.parentElement
+  if (details instanceof HTMLDetailsElement && details.open && hoverDisclosures.has(details))
+    event.preventDefault()
+}
+
+function dismissHoveredLinks(card: HTMLElement, focus: EventTarget | null) {
+  const details = card.querySelector('details')
+  if (details && hoverDisclosures.has(details) && !(focus instanceof Node && details.contains(focus))) {
+    details.open = false
+    hoverDisclosures.delete(details)
+  }
+}
+
+function closeAfterHover(event: PointerEvent) {
+  if (event.pointerType === 'mouse' && event.currentTarget instanceof HTMLElement)
+    dismissHoveredLinks(event.currentTarget, document.activeElement)
+}
+
+function closeAfterFocus(event: FocusEvent) {
+  if (event.currentTarget instanceof HTMLElement && !event.currentTarget.matches(':hover'))
+    dismissHoveredLinks(event.currentTarget, event.relatedTarget)
+}
+
+function closeFromKeyboard(event: KeyboardEvent) {
+  const details = event.currentTarget
+  if (!(details instanceof HTMLDetailsElement) || !details.open)
+    return
+
+  event.preventDefault()
+  details.open = false
+  hoverDisclosures.delete(details)
+  details.querySelector('summary')?.focus()
 }
 </script>
 
@@ -32,7 +84,7 @@ function replaceFailedIcon(event: Event) {
     </h2>
     <el-row :gutter="15">
       <el-col v-for="item in resources" :key="item.id" class="resource_col" :xs="24" :sm="12" :md="8" :lg="6">
-        <el-card class="resource_card" shadow="hover" :body-style="{ padding: 0 }">
+        <el-card class="resource_card" shadow="hover" :body-style="{ padding: 0 }" @pointerleave="closeAfterHover" @focusout="closeAfterFocus">
           <div class="card_main">
             <div class="card_l">
               <div class="logo">
@@ -61,8 +113,8 @@ function replaceFailedIcon(event: Event) {
                 </p>
               </el-tooltip>
             </div>
-            <details class="card_r">
-              <summary :aria-label="`${item.title} 文档链接`">
+            <details class="card_r" @keydown.esc="closeFromKeyboard">
+              <summary :aria-label="`${item.title} 文档链接`" @pointerenter="revealOnHover" @click="keepHoveredLinks">
                 <el-icon :size="15">
                   <DArrowRight />
                 </el-icon>

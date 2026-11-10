@@ -138,3 +138,15 @@
     }
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .card_r[open] .switch_box {
+    animation: reveal-links 0.2s ease-out;
+  }
+}
+
+@keyframes reveal-links {
+  from {
+    transform: translateY(100%);
+  }
+}

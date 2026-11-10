@@ -14,6 +14,7 @@ const hero = useTemplateRef<HTMLElement>('hero')
 const catalog = useTemplateRef<HTMLElement>('catalog')
 const playerContainer = useTemplateRef<HTMLDivElement>('playerContainer')
 const playlistController = new AbortController()
+const playlistState = ref<'idle' | 'loading' | 'ready' | 'unavailable'>('idle')
 let player: APlayer | undefined
 
 useParallax(hero)
@@ -25,11 +26,20 @@ function scrollToCatalog() {
   })
 }
 
-onMounted(async () => {
+async function loadPlayer() {
+  if (playlistState.value === 'loading' || playlistState.value === 'ready')
+    return
+
+  playlistState.value = 'loading'
   const audio = await fetchPlaylist(playlistController.signal)
   const container = playerContainer.value
-  if (!container || !audio.length || playlistController.signal.aborted)
+  if (!container || playlistController.signal.aborted)
     return
+
+  if (!audio.length) {
+    playlistState.value = 'unavailable'
+    return
+  }
 
   player = new APlayer({
     container,
@@ -37,7 +47,10 @@ onMounted(async () => {
     lrcType: 3,
     audio,
   })
-})
+  playlistState.value = 'ready'
+}
+
+onMounted(loadPlayer)
 
 onBeforeUnmount(() => {
   playlistController.abort()
@@ -48,6 +61,14 @@ onBeforeUnmount(() => {
 <template>
   <div class="body">
     <div id="player" ref="playerContainer" />
+    <el-button
+      v-if="playlistState !== 'ready'"
+      class="playlist_status"
+      :loading="playlistState !== 'unavailable'"
+      @click="loadPlayer"
+    >
+      {{ playlistState === 'unavailable' ? '重试加载歌单' : '歌单加载中' }}
+    </el-button>
     <el-backtop :right="30" :bottom="80" :visibility-height="100" />
     <Nav />
     <section ref="hero" class="section">
@@ -77,4 +98,11 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 @use '~/styles/homepage.scss';
+
+.playlist_status {
+  position: fixed;
+  z-index: 100;
+  bottom: 12px;
+  left: 10px;
+}
 </style>
