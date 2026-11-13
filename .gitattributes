@@ -1,0 +1,2 @@
+# 补丁上下文前缀后的原始制表符属于补丁格式。
+patches/*.patch whitespace=-space-before-tab

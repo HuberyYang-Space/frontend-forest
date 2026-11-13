@@ -6,5 +6,8 @@ trustPolicyExclude:
 
 shellEmulator: true
 
+patchedDependencies:
+  element-plus@2.14.8: patches/element-plus@2.14.8.patch
+
 allowBuilds:
   '@parcel/watcher': false

@@ -1,0 +1,15 @@
+diff --git a/es/components/image/src/image.vue_vue_type_script_setup_true_lang.mjs b/es/components/image/src/image.vue_vue_type_script_setup_true_lang.mjs
+index d4cf592ba82f828025fc7824affb72c442bdd5e7..fe54da499cd85cbca74b88623b971fa743907b51 100644
+--- a/es/components/image/src/image.vue_vue_type_script_setup_true_lang.mjs
++++ b/es/components/image/src/image.vue_vue_type_script_setup_true_lang.mjs
+@@ -102,8 +102,8 @@ var image_vue_vue_type_script_setup_true_lang_default = /*@__PURE__*/ defineComp
+ 				const scrollContainer = getScrollContainer(container.value);
+ 				_scrollContainer.value = isWindow(scrollContainer) ? void 0 : scrollContainer;
+ 			}
+-			const { stop } = useIntersectionObserver(container, ([entry]) => {
+-				lazyLoadHandler(entry.isIntersecting);
++			const { stop } = useIntersectionObserver(container, (entries) => {
++				lazyLoadHandler(entries.some(entry => entry.isIntersecting));
+ 			}, { root: _scrollContainer });
+ 			stopScrollListener = stop;
+ 		}

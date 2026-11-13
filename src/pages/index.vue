@@ -2,11 +2,10 @@
 import APlayer from 'aplayer'
 import Nav from '~/components/Nav.vue'
 import { useParallax } from '~/composables/useParallax'
-import { resourceGroups } from '~/data/resources'
 import { fetchPlaylist } from '~/services/playlist'
 import 'aplayer/dist/APlayer.min.css'
 
-const CardList = defineAsyncComponent(() => import('~/components/CardList.vue'))
+const ResourceCatalog = defineAsyncComponent(() => import('~/components/ResourceCatalog.vue'))
 const BaseSearchEngine = defineAsyncComponent(() => import('~/components/BaseSearchEngine.vue'))
 
 const currentYear = new Date().getFullYear()
@@ -87,7 +86,7 @@ onBeforeUnmount(() => {
 
     <main ref="catalog" class="main_container">
       <BaseSearchEngine />
-      <CardList v-for="{ title, resources } in resourceGroups" :key="title" :title :resources />
+      <ResourceCatalog />
     </main>
 
     <footer class="footer_container">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TagProps } from 'element-plus'
-import type { Resource } from '~/data/resources'
+import type { Resource } from '~/data/resource-types'
 import { DArrowRight } from '@element-plus/icons-vue'
 
 defineProps<{
@@ -15,16 +15,10 @@ const tagTypes = new Map<string, TagProps['type']>([
 ])
 
 const fallbackIcon = '/error.gif'
+// ElCard 正文默认的滚动容器会被 ElImage 误作观察根，正文随卡片裁切即可。
+const cardBodyStyle = { padding: 0, overflow: 'hidden' } as const
 const hoveredResource = ref<string>()
 const activatedResource = ref<string>()
-
-function replaceFailedIcon(event: Event) {
-  const img = event.currentTarget
-  if (img instanceof HTMLImageElement && img.getAttribute('src') !== fallbackIcon) {
-    img.src = fallbackIcon
-    img.classList.add('err')
-  }
-}
 
 function areLinksOpen(id: string) {
   return hoveredResource.value === id || activatedResource.value === id
@@ -94,7 +88,7 @@ function closeFromKeyboard(event: KeyboardEvent, id: string) {
         <el-card
           class="resource_card"
           shadow="hover"
-          :body-style="{ padding: 0 }"
+          :body-style="cardBodyStyle"
           @pointerleave="closeAfterHover($event, item.id)"
           @focusout="closeAfterFocus($event, item.id)"
           @keydown.esc="closeFromKeyboard($event, item.id)"
@@ -102,7 +96,11 @@ function closeFromKeyboard(event: KeyboardEvent, id: string) {
           <div class="card_main">
             <div class="card_l">
               <div class="logo">
-                <img :src="item.iconUrl" alt="" @error="replaceFailedIcon">
+                <el-image class="resource_icon" :src="item.iconUrl" alt="" fit="contain" lazy>
+                  <template #error>
+                    <el-image class="resource_icon" :src="fallbackIcon" alt="" fit="contain" />
+                  </template>
+                </el-image>
               </div>
             </div>
             <div class="card_m">

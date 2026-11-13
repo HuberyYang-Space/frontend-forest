@@ -162,6 +162,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  element-plus@2.14.8: f5ce4f857d8910551e44d928c4fc9db59f0da49a05e475d01f52a16edbac6349
+
 importers:
 
   .:
@@ -177,7 +180,7 @@ importers:
         version: 1.21.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       element-plus:
         specifier: ^2.14.8
-        version: 2.14.8(vue@3.5.45(typescript@6.0.3))
+        version: 2.14.8(patch_hash=f5ce4f857d8910551e44d928c4fc9db59f0da49a05e475d01f52a16edbac6349)(vue@3.5.45(typescript@6.0.3))
       nanoid:
         specifier: ^6.0.2
         version: 6.0.2
@@ -5006,7 +5009,7 @@ snapshots:
 
   electron-to-chromium@1.5.478: {}
 
-  element-plus@2.14.8(vue@3.5.45(typescript@6.0.3)):
+  element-plus@2.14.8(patch_hash=f5ce4f857d8910551e44d928c4fc9db59f0da49a05e475d01f52a16edbac6349)(vue@3.5.45(typescript@6.0.3)):
     dependencies:
       '@ctrl/tinycolor': 4.3.0
       '@element-plus/icons-vue': 2.3.2(vue@3.5.45(typescript@6.0.3))

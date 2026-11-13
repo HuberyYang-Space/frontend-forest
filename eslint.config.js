@@ -7,4 +7,11 @@ export default antfu(
       'no-console': 'off',
     },
   },
+  {
+    files: ['tests/*.test.mjs'],
+    rules: {
+      'test/no-import-node-test': 'off',
+      'test/consistent-test-it': 'off',
+    },
+  },
 )

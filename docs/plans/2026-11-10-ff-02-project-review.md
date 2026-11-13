@@ -16,7 +16,7 @@
 - **键盘和焦点。** Chrome 中按 Tab 切到谷歌引擎，焦点仍留在搜索框。首页卸载后，遗留监听仍在 404 上拦截 Enter。资源卡语言链接和 404 返回入口使用点击型元素。搜索提供独立的可聚焦引擎选择，恢复 Tab 和 Shift+Tab 的原生焦点顺序，同步改引导文案。保留页面空闲时用 Enter 打开搜索的习惯，过滤已被处理的事件、交互控件、输入法组合和重复按键。关闭时恢复焦点。[搜索](../../src/components/BaseSearchEngine.vue) · [资源卡](../../src/components/CardList.vue) · [404](../../src/pages/%5B...path%5D.vue)
 - **类型缺口。** 全局 `AnyKey`、裸 APlayer 模块声明、组件和 DOM 的 `as any`、`ref<any[]>`、Axios 隐式 `any` 让严格模式漏掉实际错配。例如资源卡向签名为 `string[]` 的函数传入单个字符串，当前实现以子串匹配标签。保留可推断的局部类型，给 props、模板引用、事件、异步边界和第三方接口补类型。[APlayer 声明现路径](../../src/types/aplayer.d.ts) · [资源卡](../../src/components/CardList.vue) · [歌单请求](../../src/services/playlist.ts)
 - **导航与视差的生命周期。** 导航写入响应式代理，模板读取原始数组。首页用视口坐标当作绝对滚动位置。两个滚动监听均未随组件卸载。先在真实浏览器复现高亮、非零起点滚动和重复挂载，再分别处理已证实的问题。[导航](../../src/composables/useNavFixed.ts) · [首页](../../src/pages/index.vue) · [视差](../../src/composables/useParallax.ts)
-- **数据与视图耦合。** 27 条静态资源经假异步加载，悬浮状态写进资源对象，卡片再用 watch 复制 props。将数据与视图状态分开，移除静态资源的加载状态。两个 SFC 同时载入首页样式，先核对构建产物与实际生效的选择器，再按消费者拆分。[资源清单](../../src/data/resources.ts) · [资源卡](../../src/components/CardList.vue) · [首页](../../src/pages/index.vue)
+- **数据与视图耦合。** 27 条静态资源经假异步加载，悬浮状态写进资源对象，卡片再用 watch 复制 props。将数据与视图状态分开，移除静态资源的加载状态。两个 SFC 同时载入首页样式，先核对构建产物与实际生效的选择器，再按消费者拆分。[资源清单](https://github.com/Hub-yang/frontend-forest/blob/d1036e9/src/data/resources.ts) · [资源卡](../../src/components/CardList.vue) · [首页](../../src/pages/index.vue)
 
 ## P3 入口、配置与待复现项
 
@@ -67,7 +67,7 @@ FF-02 的目录迁移只移动既有资源记录，逐条更新链接归 FF-03�
 
 2026-11-10 在隔离工作树完成项目自有类型、路径别名和目录整理。
 
-- [静态资源清单](../../src/data/resources.ts)与旧清单逐项深比较通过。两组共 27 条，ID、顺序、组名、地址、标签、简介和图标路径一致。卡片用原生折叠控件展开中英文链接，桌面入口由悬停展开改为点击。标签颜色改为精确匹配，`react native` 和 `nuxtjs` 等复合标签使用默认色。卡片与首页样式分别按作用域加载。[资源卡](../../src/components/CardList.vue)
+- [静态资源清单](https://github.com/Hub-yang/frontend-forest/blob/d1036e9/src/data/resources.ts)与旧清单逐项深比较通过。两组共 27 条，ID、顺序、组名、地址、标签、简介和图标路径一致。卡片用原生折叠控件展开中英文链接，桌面入口由悬停展开改为点击。标签颜色改为精确匹配，`react native` 和 `nuxtjs` 等复合标签使用默认色。卡片与首页样式分别按作用域加载。[资源卡](../../src/components/CardList.vue)
 - TypeScript 与 Vite 的实际解析器均解析 `~/main` 到 `src/main.ts`，均拒绝 `@/main`。分别恢复 TS、Vite、首页 SCSS 和资源卡 SCSS 的旧别名，核对四处变异均落地并分别触发预期失败，恢复后通过。ESLint 加开显式 `any` 检查、`vue-tsc --noEmit`、Vite 默认和原生配置构建均通过，生成声明已对照。主目录 `dev` 的 `tsconfig.json` 原补丁逐字核对，并与本批别名调整在隔离副本合并通过类型检查。
 - Chrome 通过已知 DOM 与 console 探针，最终 14 项回归通过。键盘和触屏可展开语言链接，坏图回退一次，320px 至 1280px 的四个宽度下页面无横向溢出。导航点击后高亮，从 120px 起滚时目录准确停在视口顶部下方 60px，离页后两条滚动监听均已移除。404 返回支持键盘且替换历史，深层路径的加载图返回 200，搜索和播放器入口也通过复测。
 - 标题计时器通过 Chrome 合成可见性事件验证。注入路由分块加载失败后，基线进度条正常退出，保留该逻辑。开发代理保留现有用途，缺少代理配置的模式跳过代理初始化。
