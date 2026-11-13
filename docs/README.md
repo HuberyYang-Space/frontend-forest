@@ -6,13 +6,13 @@
 
 [项目待办](TODO.md)集中追踪依赖升级、项目审查和资源链接更新。每项通过固定编号关联后续方案、进度和验收记录。
 
-[FF-05 按需加载改造](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#实施与验收)已完成本地验收；包含用户批准的 ElImage 最小 pnpm 补丁。2026-11-13 用户已授权提交、推送和发布，当前处于发布准备阶段。
+[FF-05 按需加载改造](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#生产发布验收)已完成生产发布及验收，包含用户批准的 ElImage 最小 pnpm 补丁。外部音频播放观察项经用户确认另列为 [FF-06](TODO.md#ff-06-核验外部音频播放)。
 
 ## 当前资源目录
 
-2026-11-13，本地目录细分为 16 类，仍为 411 项、471 个语言入口。名称及数量见[分类元数据](../src/data/resource-categories.ts)，正文见[分类资源目录](../src/data/resource-categories/)。使用 Element Plus 标签页，只挂载当前分类；分类数据动态加载，图标通过 ElImage 按视口加载。[FF-05 验收记录](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#实施与验收)记录分包、异步状态、浏览器及发布包证据。本地变更尚未提交和发布。
+2026-11-13，线上目录已细分为 16 类，仍为 411 项、471 个语言入口。名称及数量见[分类元数据](../src/data/resource-categories.ts)，正文见[分类资源目录](../src/data/resource-categories/)。使用 Element Plus 标签页，只挂载当前分类；分类数据动态加载，图标通过 ElImage 按视口加载。[FF-05 验收记录](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#实施与验收)记录分包、异步状态、浏览器及发布包证据。[生产发布验收](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#生产发布验收)记录提交、Actions、现网及回滚核对。
 
-2026-11-12，线上已发布 411 项资源：框架与生态 273 项、打包/构建工具 36 项、CSS 相关 51 项、测试与代码质量 51 项。版本、维护状态、语言入口、采用证据、图标来源及暂缓项见 [FF-03 核验记录](ff-03-resource-audit.md)，实施过程见 [FF-03 计划](plans/2026-11-12-ff-03-resource-audit-and-expansion.md)。
+2026-11-12 的 FF-03 历史版本按四类发布 411 项资源：框架与生态 273 项、打包/构建工具 36 项、CSS 相关 51 项、测试与代码质量 51 项。版本、维护状态、语言入口、采用证据、图标来源及暂缓项见 [FF-03 核验记录](ff-03-resource-audit.md)，实施过程见 [FF-03 计划](plans/2026-11-12-ff-03-resource-audit-and-expansion.md)。
 
 ## 接手基线
 
