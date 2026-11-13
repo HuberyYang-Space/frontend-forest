@@ -8,6 +8,8 @@
 
 [FF-05 按需加载改造](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#生产发布验收)已完成生产发布及验收，包含用户批准的 ElImage 最小 pnpm 补丁。外部音频播放观察项经用户确认另列为 [FF-06](TODO.md#ff-06-核验外部音频播放)。
 
+[FF-06 诊断与修复计划](plans/2026-11-13-ff-06-media-playback.md)已完成，空间白名单修复已生效，77 项冷/热缓存、线上 37 首播放与歌词同步、封面及断网恢复验收通过，无需重部署前端。用户已确认将原生控制台的传输稳定性观察另列 [FF-07](TODO.md#ff-07-核验媒体传输稳定性)，保留证据供后续排查。
+
 ## 当前资源目录
 
 2026-11-13，线上目录已细分为 16 类，仍为 411 项、471 个语言入口。名称及数量见[分类元数据](../src/data/resource-categories.ts)，正文见[分类资源目录](../src/data/resource-categories/)。使用 Element Plus 标签页，只挂载当前分类；分类数据动态加载，图标通过 ElImage 按视口加载。[FF-05 验收记录](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#实施与验收)记录分包、异步状态、浏览器及发布包证据。[生产发布验收](plans/2026-11-13-ff-05-category-tabs-and-lazy-loading.md#生产发布验收)记录提交、Actions、现网及回滚核对。
