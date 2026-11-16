@@ -36,7 +36,7 @@
 | [husky](https://registry.npmjs.org/husky/9.1.7)                                                          | `^9.1.7`    | 9.1.7         | 9.1.7      | 2 · 已最新            |
 | [lint-staged](https://registry.npmjs.org/lint-staged/17.6.0)                                             | `^16.1.0`   | 16.4.0        | 17.6.0     | 2                     |
 | [sass-embedded](https://registry.npmjs.org/sass-embedded/1.108.1)                                        | `^1.83.0`   | 1.102.0       | 1.108.1    | 3                     |
-| [typescript](https://registry.npmjs.org/typescript/7.0.2)                                                | `^5.8.3`    | 5.9.3         | 7.0.2      | 2 · 暂定 6.0.3        |
+| [typescript](https://registry.npmjs.org/typescript/6.0.3)                                                | `^5.8.3`    | 5.9.3         | —          | 2 · 升至 6.0.3        |
 | [unplugin-auto-import](https://registry.npmjs.org/unplugin-auto-import/21.1.0)                           | `^19.3.0`   | 19.3.0        | 21.1.0     | 3                     |
 | [unplugin-element-plus](https://registry.npmjs.org/unplugin-element-plus/0.11.2)                         | `^0.10.0`   | 0.10.0        | 0.11.2     | 3 · 移除未使用插件    |
 | [unplugin-icons](https://registry.npmjs.org/unplugin-icons/24.0.0)                                       | `^22.1.0`   | 22.5.0        | 24.0.0     | 3 · 移除未使用插件    |
@@ -70,7 +70,7 @@
 
 ## 批次 2 · TypeScript、ESLint 和提交钩子
 
-- [x] 将 TypeScript 升到 **6.0.3**，同批升级 `vue-tsc`、`@types/node`、ESLint、Antfu 配置和格式化插件。TypeScript **7.0.2** 暂缓。Antfu 10 使用的 `@typescript-eslint/parser@8.72.2` 支持 TS `>=4.8.4 <6.1.0`，Vue 的 `vue-tsc@3.3.14` 仍通过 Volar 注入 JS 编译器，而 TS 7 已切换到原生编译器。等解析器和 Vue 类型检查链都提供正式支持后，再重跑两条验证链决定是否升 7。 [TypeScript 7](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) · [parser peer](https://registry.npmjs.org/%40typescript-eslint%2Fparser/8.72.2) · [Vue 类型检查入口](https://github.com/vuejs/language-tools/blob/v3.3.14/packages/tsc/index.ts)
+- [x] 将 TypeScript 升到 **6.0.3**，同批升级 `vue-tsc`、`@types/node`、ESLint、Antfu 配置和格式化插件。
 - [x] 在 [tsconfig.json](../../tsconfig.json) 去掉弃用的 `baseUrl`，两个别名的目标改为 `./src/*`，保留 `Bundler`、严格检查和 `noEmit`。检查 TS 6 默认启用的 `noUncheckedSideEffectImports` 对 CSS/SCSS、APlayer CSS 和 Vite 资源声明的影响。若 Node 类型未进入编译上下文，再显式补入 `node`，以实际诊断为准。 [TypeScript 6.0 迁移说明](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html)
 - [x] 在 [ESLint 配置](../../eslint.config.js)保留 flat config、格式化和 `no-console` 覆盖，清理未使用的 `globals.definePage`。对比 `eslint --print-config` 在 TS 和 Vue 文件上的有效规则，核对 Antfu 10 新增的换行规则和格式化输出。在 `.vscode/settings.json` 原样复制 Antfu 官方 **VS Code support** 的完整 JSONC，包含全量语言列表。修改 [.gitignore](../../.gitignore) 放行设置文件，在 [扩展推荐](../../.vscode/extensions.json)保留 Vue 插件并增加 `dbaeumer.vscode-eslint`。 [ESLint 10 迁移指南](https://eslint.org/docs/latest/use/migrate-to-10.0.0) · [Antfu 10 发布说明](https://github.com/antfu/eslint-config/releases/tag/v10.0.0) · [Antfu VS Code support](https://github.com/antfu/eslint-config#ide-support-auto-fix-on-save)
 - [x] 将 commitlint 两个包同步升到 21.2.4，lint-staged 升到 17.6.0，核对 Git ≥2.32。保留 [项目提交类型规则](../../commitlint.config.js)及现有 `eslint --fix` 仅接收暂存文件的匹配方式。在临时 Git 目录验证有效提交信息通过、无效类型被拦截，以及部分暂存时未暂存和无关文件没有被带入。 [Commitlint 21 说明](https://github.com/conventional-changelog/commitlint/releases/tag/v21.0.0) · [lint-staged 迁移指南](https://github.com/lint-staged/lint-staged/blob/v17.6.0/MIGRATION.md)
@@ -92,17 +92,9 @@
 ## 实施与验收结果
 
 - CI 改用 Node 26 LTS、pnpm 12.18.0、checkout 7.0.1 和 pnpm/setup 3.1.2。工程工具升级到 TypeScript 6.0.3、vue-tsc 3.3.14、ESLint 10.14.0 和 Antfu 10.0.0。VS Code 设置与 Antfu 10 官方 JSONC 逐字一致。
-- 前端锁定 Vite 8.3.6、Vue 3.5.45、Vue Router 5.4.0、Element Plus 2.14.8、Axios 1.21.0、Nano ID 6.0.2。Vite 8.3.7 和 Axios 1.21.1 当时均未满 24 小时，按确认的策略使用上一稳定版，保留 `trustPolicy` 且没有新增发布年龄豁免。Axios 的传递依赖 `follow-redirects` 已在锁文件更新到 1.16.2。TypeScript 7 待 Vue 类型检查和 ESLint 解析器正式兼容。 [Axios 修复说明](https://github.com/axios/axios/releases/tag/v1.21.1)
+- 前端锁定 Vite 8.3.6、Vue 3.5.45、Vue Router 5.4.0、Element Plus 2.14.8、Axios 1.21.0、Nano ID 6.0.2。Vite 8.3.7 和 Axios 1.21.1 当时均未满 24 小时，按确认的策略使用上一稳定版，保留 `trustPolicy` 且没有新增发布年龄豁免。Axios 的传递依赖 `follow-redirects` 已在锁文件更新到 1.16.2。 [Axios 修复说明](https://github.com/axios/axios/releases/tag/v1.21.1)
 - 原版本在 Node 24 下建立基线。最终 Node 26.13.0 和 pnpm 12.18.0 在 macOS arm64 和 Linux x64 容器上均通过干净的 `pnpm install --frozen-lockfile`、`pnpm lint`、`pnpm exec vue-tsc --noEmit`、`pnpm build`。三份生成声明前后相同，macOS 上也通过 Vite 原生配置加载验证。GitHub Actions 实际运行和发布留在发布阶段核验。
 - Chrome 开发及生产预览通过 27 张资源卡、搜索快捷键和目标 URL、导航滚动、404 直达与返回、APlayer 播放列表成功及 503 两种夹具。搜索提交后重载到 `?word=` 在旧版对照中同样存在。常规 SFC 热更新可在同一文档生效并恢复，快速增删路由文件的一次探针出现短暂的虚拟模块加载错误后自动恢复。
 - 新版 `vue-tsc` 先复现导航模板 ref 的 TS6133，再通过 `useTemplateRef` 适配，滚动状态复测通过。新版 Router 的 `next()` 弃用警告先在 console 复现，再按新版守卫写法消除。临时 Husky 仓库验证合法和非法提交信息以及部分暂存。Oxc 的两个压缩开关分别关闭后让对应探针失败，恢复后均通过。
 
 - 提交前复核了 Vite 8、Router 5、TypeScript 6、ESLint 10 和 pnpm 12 的迁移要求。清理了锁文件中无匹配依赖的 pnpm 规则和已不存在的 TypeScript 排除路径。生产预览下，深层路由的加载图由 404 恢复为 `/loading.gif` 返回 200、`image/gif` 且文件字节一致。最终冻结安装、lint、类型检查、默认构建和原生配置构建均通过，生成声明可重复生成。 [Vite public 目录](https://vite.dev/guide/assets.html#the-public-directory)
-
-## Vue Vapor 评估
-
-**建议等 Vue 3.6 正式版，再做单组件试点。** 本轮 npm `latest` 为 Vue 3.5.45，包含 Vapor 的 3.6 分支仍是 `3.6.0-rc.14`。Vue 官方给现有应用的建议是局部启用，并通过 `vaporInteropPlugin` 与 VDOM 组件互操作。 [npm Vue 发布标签](https://registry.npmjs.org/-/package/vue/dist-tags) · [Vue 3.6 RC](https://github.com/vuejs/core/releases/tag/v3.6.0-rc.14) · [Vapor 官方兼容说明](https://github.com/vuejs/core/releases/tag/v3.6.0-rc.1#feature-compatibility)
-
-- [首页](../../src/pages/index.vue)通过 `getCurrentInstance()` 和 `globalProperties` 访问 APlayer。Vapor 不支持这两种使用方式。[搜索组件](../../src/components/BaseSearchEngine.vue)还从 Element Plus 组件实例读取 `$el`，互操作需要单独验收。
-- [应用根组件](../../src/App.vue)的 Element Plus Config Provider 和 Vue Router 视图仍依赖 VDOM。混合模式会保留 VDOM 运行时，收益应以实测的首屏资源大小和交互耗时判断。
-- 稳定版发布且依赖声明兼容后，可从仅含原生模板的 [Nav.vue](../../src/components/Nav.vue) 开始。保留应用入口的 `createApp`，仅为试点组件选择 Vapor，对比导航滚动和点击的 DOM、console 与产物，再决定是否扩大范围。

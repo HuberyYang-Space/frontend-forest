@@ -63,6 +63,10 @@ function reloadPage() {
   margin-top: 24px;
 }
 
+.resource_catalog :deep(.el-tabs__content) {
+  min-height: 100vh;
+}
+
 .category_error {
   padding-block: 20px;
 }

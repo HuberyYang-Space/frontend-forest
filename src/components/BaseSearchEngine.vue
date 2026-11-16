@@ -2,24 +2,22 @@
 import type { ButtonInstance, InputInstance } from 'element-plus'
 import { ArrowLeftBold, ArrowRightBold, CaretBottom, Search } from '@element-plus/icons-vue'
 
-const iconOptions = '?imageMogr2/thumbnail/240x/format/webp/blur/1x0/quality/100|imageslim'
-
 const searchProviders = [
   {
     label: '百度',
-    icon: `https://infinity-permanent.infinitynewtab.com/infinity/search-add/baidu.png${iconOptions}`,
+    icon: '/images/search-icons/baidu.webp',
     url: 'http://www.baidu.com/baidu',
     queryParam: 'word',
   },
   {
     label: '谷歌',
-    icon: `https://infinity-permanent.infinitynewtab.com/infinity/search-add/google.png${iconOptions}`,
+    icon: '/images/search-icons/google.webp',
     url: 'https://www.google.com/search',
     queryParam: 'q',
   },
   {
     label: '必应',
-    icon: `https://infinity-permanent.infinitynewtab.com/infinity/search-add/bing_new.png${iconOptions}`,
+    icon: '/images/search-icons/bing.webp',
     url: 'https://cn.bing.com/search',
     queryParam: 'q',
   },
